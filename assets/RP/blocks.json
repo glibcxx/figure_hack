@@ -1,0 +1,18 @@
+{
+    "fh:block_selector": { "textures": "transparent", "sound": "glass" },
+    "fh:block_selector_black": { "textures": "black", "sound": "glass" },
+    "fh:block_selector_blue": { "textures": "blue", "sound": "glass" },
+    "fh:block_selector_brown": { "textures": "brown", "sound": "glass" },
+    "fh:block_selector_cyan": { "textures": "cyan", "sound": "glass" },
+    "fh:block_selector_gray": { "textures": "gray", "sound": "glass" },
+    "fh:block_selector_green": { "textures": "green", "sound": "glass" },
+    "fh:block_selector_light_blue": { "textures": "light_blue", "sound": "glass" },
+    "fh:block_selector_lime": { "textures": "lime", "sound": "glass" },
+    "fh:block_selector_magenta": { "textures": "magenta", "sound": "glass" },
+    "fh:block_selector_pink": { "textures": "pink", "sound": "glass" },
+    "fh:block_selector_purple": { "textures": "purple", "sound": "glass" },
+    "fh:block_selector_red": { "textures": "red", "sound": "glass" },
+    "fh:block_selector_silver": { "textures": "silver", "sound": "glass" },
+    "fh:block_selector_white": { "textures": "white", "sound": "glass" },
+    "fh:block_selector_yellow": { "textures": "yellow", "sound": "glass" }
+}

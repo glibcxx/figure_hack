@@ -2,16 +2,21 @@
 
 #include "ll/api/mod/NativeMod.h"
 
-namespace my_mod {
+#include "Config.h"
 
-class MyMod {
+namespace fh {
+
+class figureHack {
+    Config mConfig;
 
 public:
-    static MyMod& getInstance();
+    static figureHack& getInstance();
 
-    MyMod(ll::mod::NativeMod& self) : mSelf(self) {}
+    figureHack(ll::mod::NativeMod& self) : mSelf(self) {}
 
     [[nodiscard]] ll::mod::NativeMod& getSelf() const { return mSelf; }
+
+    Config getConfig() { return mConfig; }
 
     /// @return True if the mod is loaded successfully.
     bool load();
@@ -30,4 +35,4 @@ private:
     ll::mod::NativeMod& mSelf;
 };
 
-} // namespace my_mod
+} // namespace fh

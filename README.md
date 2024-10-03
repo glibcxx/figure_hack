@@ -1,35 +1,71 @@
-# LeviLamina Mod Template
+# Figure Hack
 
-A LeviLamina mod template
+一个有助于分析红石系统的小工具
 
-This mod is a template for developing LeviLamina mods.
+## 安装
 
-## Install
+1. 安装插件：略
+2. 安装行为包和资源包：你需要为 bds 安装行为包，为客户端安装行为包和资源包
 
-Generate a new repository from this template.
+## 使用
 
-## Usage
+使用以下命令获得"魔杖"：
 
-Before using this mod template, make sure that you have installed XMake and a Minecraft Bedrock Server with LeviLamina.
+```
+/mstick
+```
 
-1. Clone the new repository into a local folder.
+手持魔杖按`Q`或者点击鼠标左键切换模式。
 
-1. Change the mod name and the expected LeviLamina version in `xmake.lua`.
+对着方块按鼠标右键使用对应功能。
 
-1. Add your code.
+对于可交互方块，我们强烈建议按住蹲再点鼠标右键。
 
-1. Run `xmake repo -u` in the root of the repository.
+## 功能
 
-1. Run `xmake` to build the mod.
+### 查询方块信息
 
-Now the build is complete at `bin/`.
+```
+/info basic [x y z]
+```
 
-## Contributing
+查询方块的基本信息。x y z 坐标是可选项。对应魔杖的普通模式。
 
-Ask questions by creating an issue.
+---
 
-PRs accepted.
+```
+/info circuit [x y z]
+```
 
-## License
+查询红石元件的基本信息。x y z 坐标是可选项。对应魔杖的红石模式。
 
-CC0-1.0 © LiteLDev
+---
+
+```
+/info source [x y z]
+```
+
+查询红石元件的信号源。x y z 坐标是可选项。对应魔杖的信号源模式。
+
+### 修改游戏速度
+
+```
+/tick (数字)/pause/resume/reset
+```
+
+- 数字：tps, 默认20
+- pause：暂停游戏
+- resume：恢复游戏
+- reset：tps设为20
+
+### 邻接表更新可视化
+
+该功能需要将`config.json`文件的`"enable_microtick"`设为`true`才能启用。
+
+使用前请备份存档。
+
+使用魔杖的邻接表模式右键选中红石元件，当该元件发生邻接表更新时，会自动显示搜索元件的范围。
+
+再次右键可以取消选中，切换模式可以一键取消选中所有。
+
+更新速度受 tick 指令影响。

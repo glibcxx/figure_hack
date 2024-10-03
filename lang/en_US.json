@@ -1,0 +1,42 @@
+{
+    "command": {
+        "tick": {
+            "description": "Change tick rate",
+            "rate": {
+                "success": "Tick rate set to：{}",
+                "invalid_rate": "Invalid input. Rate must be a positive number",
+                "freeze_now": "unable to set tick rate during freeze state"
+            },
+            "freeze": {
+                "freezed": "Game freezed",
+                "resumed": "Game resumed"
+            },
+            "reset": {
+                "success": "Tick rate reset to: 20"
+            }
+        },
+        "info": {
+            "description": "Query block info",
+            "error": {
+                "no_circuit_component": "{}: not a redstone component",
+                "no_block": "No block seleted",
+                "invalid_player": "Invalid excutor. It must be a player"
+            }
+        },
+        "mstick": {
+            "description": "Give you a magic stick"
+        }
+    },
+    "item": {
+        "magic_stick": {
+            "name": "magic stick - {}",
+            "changed_to": "Switched to: {}",
+            "mode": {
+                "normal": "normal mod",
+                "redstone": "redstone mod",
+                "source": "source mod",
+                "graph": "graph mod"
+            }
+        }
+    }
+}

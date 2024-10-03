@@ -1,0 +1,27 @@
+{
+    "format_version": 2,
+    "header": {
+        "name": "[BP]block_selector",
+        "description": "this behaviour pack is a part of Figure Hack mod",
+        "uuid": "495e0ad1-7fe1-40bc-a8b7-00b097a3a392",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 20, 0]
+    },
+    "modules": [
+        {
+            "description": "Behavior Pack",
+            "type": "data",
+            "uuid": "2f71ff5c-9dcd-4f37-9da7-8cfa849a95ec",
+            "version": [1, 0, 0]
+        }
+    ],
+    "dependencies": [
+        {
+            "uuid": "066c8d2b-dc07-4b43-a57d-29277d939da2",
+            "version": [1, 0, 0]
+        }
+    ],
+    "metadata": {
+        "authors": ["none"]
+    }
+}

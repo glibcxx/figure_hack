@@ -1,0 +1,16 @@
+tile.fh:block_selector.name=transparent
+tile.fh:block_selector_black.name=black
+tile.fh:block_selector_blue.name=blue
+tile.fh:block_selector_brown.name=brown
+tile.fh:block_selector_cyan.name=cyan
+tile.fh:block_selector_gray.name=gray
+tile.fh:block_selector_green.name=green
+tile.fh:block_selector_light_blue.name=light blue
+tile.fh:block_selector_lime.name=lime
+tile.fh:block_selector_magenta.name=magenta
+tile.fh:block_selector_pink.name=pink
+tile.fh:block_selector_purple.name=purple
+tile.fh:block_selector_red.name=red
+tile.fh:block_selector_silver.name=silver
+tile.fh:block_selector_white.name=white
+tile.fh:block_selector_yellow.name=yellow

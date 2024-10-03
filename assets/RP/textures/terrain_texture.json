@@ -1,0 +1,24 @@
+{
+    "resource_pack_name": "vanilla",
+    "texture_name": "atlas.terrain",
+    "padding": 8,
+    "num_mip_levels": 4,
+    "texture_data": {
+        "black": { "textures": ["textures/blocks/black"] },
+        "blue": { "textures": ["textures/blocks/blue"] },
+        "brown": { "textures": ["textures/blocks/brown"] },
+        "cyan": { "textures": ["textures/blocks/cyan"] },
+        "gray": { "textures": ["textures/blocks/gray"] },
+        "green": { "textures": ["textures/blocks/green"] },
+        "light_blue": { "textures": ["textures/blocks/light_blue"] },
+        "lime": { "textures": ["textures/blocks/lime"] },
+        "magenta": { "textures": ["textures/blocks/magenta"] },
+        "pink": { "textures": ["textures/blocks/pink"] },
+        "purple": { "textures": ["textures/blocks/purple"] },
+        "red": { "textures": ["textures/blocks/red"] },
+        "silver": { "textures": ["textures/blocks/silver"] },
+        "transparent": { "textures": ["textures/blocks/transparent"] },
+        "white": { "textures": ["textures/blocks/white"] },
+        "yellow": { "textures": ["textures/blocks/yellow"] }
+    }
+}
