@@ -4,8 +4,30 @@
 
 ## 安装
 
-1. 安装插件：略
-2. 安装行为包和资源包：你需要为 bds 安装行为包，为客户端安装行为包和资源包
+本插件基于bds 1.21.3.01 开发，不保证兼容以前的版本
+
+1. 安装插件：
+
+```shell
+lip install github.com/glibcxx/Figure-Hack
+```
+
+2. 安装行为包和资源包：
+
+从release页面下载`assets.mcaddon`，双击安装。
+
+然后将`assets.mcaddon`内的BP文件夹复制到bds的`development_behavior_packs`文件夹内。
+
+在存档的`world_behavior_packs.json`文件内，确保包含下面内容：
+
+```json
+[
+	{
+		"pack_id" : "495e0ad1-7fe1-40bc-a8b7-00b097a3a392",
+		"version" : [ 1, 0, 0 ]
+	}
+]
+```
 
 ## 使用
 
