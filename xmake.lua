@@ -11,7 +11,7 @@ if not has_config("vs_runtime") then
     set_runtimes("MD")
 end
 
-target("figure-hack") -- Change this to your mod name.
+target("figure_hack") -- Change this to your mod name.
     add_cxflags(
         "/EHa",
         "/utf-8",
