@@ -9,7 +9,7 @@
 1. 安装插件：
 
 ```shell
-lip install github.com/glibcxx/Figure-Hack
+lip install github.com/glibcxx/figure_hack
 ```
 
 2. 安装行为包和资源包：

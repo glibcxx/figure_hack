@@ -1,6 +1,6 @@
 {
     "format_version": 2,
-    "tooth": "github.com/glibcxx/Figure-Hack",
+    "tooth": "github.com/glibcxx/figure_hack",
     "version": "0.1.0",
     "info": {
         "name": "No Name",
@@ -8,7 +8,7 @@
         "author": "me",
         "tags": ["levilamina", "mod"]
     },
-    "asset_url": "https://github.com/glibcxx/Figure-Hack/releases/download/v0.1.0/Figure-Hack-windows-x64.zip",
+    "asset_url": "https://github.com/glibcxx/figure_hack/releases/download/v0.1.0/figure_hack-windows-x64.zip",
     "prerequisites": {
         "github.com/LiteLDev/LeviLamina": ">=0.13.4"
     },
