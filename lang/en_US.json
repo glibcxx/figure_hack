@@ -29,6 +29,9 @@
         },
         "mstick": {
             "description": "Give you a magic stick"
+        },
+        "pdtick": {
+            "description": "Query pendingTick info of current chunk"
         }
     },
     "item": {

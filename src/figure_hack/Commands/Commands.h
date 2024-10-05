@@ -7,7 +7,9 @@
 
 #include "GiveMagicStick.h"
 #include "Info.h"
+#include "QueryPendingTick.h"
 #include "Tick.h"
+
 
 namespace fh {
 
@@ -16,6 +18,7 @@ struct Commands {
         InfoCommand::init();
         GiveMagicStickCommand::init();
         TickCommand::init();
+        QueryPendingTickCommand::init();
     }
 };
 

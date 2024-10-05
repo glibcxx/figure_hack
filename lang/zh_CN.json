@@ -29,6 +29,9 @@
         },
         "mstick": {
             "description": "给你大魔♂杖"
+        },
+        "pdtick": {
+            "description": "查询当前区块的计划刻信息"
         }
     },
     "item": {
