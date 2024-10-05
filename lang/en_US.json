@@ -20,8 +20,12 @@
             "error": {
                 "no_circuit_component": "{}: not a redstone component",
                 "no_block": "No block seleted",
-                "invalid_player": "Invalid excutor. It must be a player"
-            }
+                "invalid_player": "Invalid excutor. It must be a player",
+                "no_source": "{}: no source"
+            },
+            "rs_comp_info": "{}: strength {}, source {}, ptr {:X}, {}",
+            "sources_of": "source list of {} ->",
+            "source_info": "  {}-{}: drP {}, dp {}, data {}, st {}, ptr {:X}, {}"
         },
         "mstick": {
             "description": "Give you a magic stick"
@@ -38,5 +42,22 @@
                 "graph": "graph mod"
             }
         }
+    },
+    "restone_type_name": {
+        "unknown": "Unknown",
+        "undefined": "Undefined",
+        "mask": "Mask",
+        "base_circuit": "Base circuit",
+        "rail": "Rail",
+        "consumer": "Consumer",
+        "powered_block": "PoweredBlock",
+        "producer": "Producer",
+        "transporter": "Transporter",
+        "capacitor": "Capacitor",
+        "piston": "Piston",
+        "comparator": "Comparator",
+        "observer": "Observer",
+        "torch": "Torch",
+        "repeater": "Repeater"
     }
 }

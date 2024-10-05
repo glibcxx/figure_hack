@@ -3,6 +3,7 @@
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
+#include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
 
 #include "mc/enums/CircuitComponentType.h"
@@ -28,40 +29,41 @@ inline bool executeCommand(Player& executor, const std::string& command) {
     }
 }
 
-inline const char* typeId2Name(CircuitComponentType type) {
+inline std::string typeId2Name(CircuitComponentType type) {
+    using ll::i18n_literals::operator""_tr;
     switch (type) {
     case CircuitComponentType::Unknown:
-        return "Unknown";
+        return "restone_type_name.unknown"_tr();
     case CircuitComponentType::Undefined:
-        return "Undefined";
+        return "restone_type_name.undefined"_tr();
     case CircuitComponentType::Mask:
-        return "Mask";
+        return "restone_type_name.mask"_tr();
     case CircuitComponentType::BaseCircuitComponent:
-        return "BaseCircuit";
+        return "restone_type_name.base_circuit"_tr();
     case CircuitComponentType::BaseRailTransporter:
-        return "Rail";
+        return "restone_type_name.rail"_tr();
     case CircuitComponentType::ConsumerComponent:
-        return "Consumer";
+        return "restone_type_name.consumer"_tr();
     case CircuitComponentType::PoweredBlockComponent:
-        return "PoweredBlock";
+        return "restone_type_name.powered_block"_tr();
     case CircuitComponentType::ProducerComponent:
-        return "Producer";
+        return "restone_type_name.producer"_tr();
     case CircuitComponentType::TransporterComponent:
-        return "Transporter";
+        return "restone_type_name.transporter"_tr();
     case CircuitComponentType::CapacitorComponent:
-        return "Capacitor";
+        return "restone_type_name.capacitor"_tr();
     case CircuitComponentType::PistonConsumer:
-        return "Piston";
+        return "restone_type_name.piston"_tr();
     case CircuitComponentType::ComparatorCapacitor:
-        return "Comparator";
+        return "restone_type_name.comparator"_tr();
     case CircuitComponentType::PulseCapacitor:
-        return "Observer";
+        return "restone_type_name.observer"_tr();
     case CircuitComponentType::RedstoneTorchCapacitor:
-        return "Torch";
+        return "restone_type_name.torch"_tr();
     case CircuitComponentType::RepeaterCapacitor:
-        return "Repeater";
+        return "restone_type_name.repeater"_tr();
     default:
-        return "";
+        return "restone_type_name.unknown"_tr();;
     }
 }
 

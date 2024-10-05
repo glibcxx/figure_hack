@@ -89,14 +89,13 @@ protected:
         case Mode::circuit: {
             BaseCircuitComponent* comp = graph.getBaseComponent(pos);
             if (comp) {
-                output.success(
-                    "{}: strength: {}, source: {}, ptr {}, {}",
+                output.success("command.info.rs_comp_info"_tr(
                     pos.toString(),
                     comp->getStrength(),
                     comp->mSources.mComponents.size(),
                     (std::ptrdiff_t)comp,
                     utils::typeId2Name(comp->getCircuitComponentType())
-                );
+                ));
             } else {
                 output.error("command.info.error.no_circuit_component"_tr(pos.toString()));
             }
@@ -106,14 +105,15 @@ protected:
             BaseCircuitComponent* comp = graph.getBaseComponent(pos);
             if (comp) {
                 if (comp->mSources.mComponents.size() == 0) {
-                    output.error("{}: no source", pos.toString());
+                    output.error("command.info.error.no_source"_tr(pos.toString()));
                     break;
                 }
-                output.success("source list of {} ->", pos.toString());
+                output.success("command.info.sources_of"_tr(pos.toString()));
+                size_t num = 1;
                 for (auto&& source : comp->mSources.mComponents) {
                     BSelector::add(dim->getDimensionId(), source.mPos, {.color = BSelector::Color::white});
-                    output.success(
-                        "  - {}: drP {}, dp {}, data {}, st {},\n     ptr: {:X}, {}",
+                    output.success("command.info.source_info"_tr(
+                        num,
                         utils::typeId2Name(source.mComponent->getCircuitComponentType()),
                         source.mDirectlyPowered,
                         source.mDampening,
@@ -121,7 +121,7 @@ protected:
                         source.mComponent->getStrength(),
                         (std::ptrdiff_t)source.mComponent,
                         source.mPos.toString()
-                    );
+                    ));
                 }
             } else {
                 output.error("command.info.error.no_circuit_component"_tr(pos.toString()));
