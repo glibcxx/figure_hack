@@ -69,6 +69,14 @@ lip install github.com/glibcxx/figure_hack
 
 查询红石元件的信号源。x y z 坐标是可选项。对应魔杖的信号源模式。
 
+### 查询实体信息
+
+```
+/info actor
+```
+
+查询玩家指向的实体信息。目前给出坐标、速度、runtimeId这三个信息。
+
 ### 修改游戏速度
 
 ```
@@ -79,6 +87,8 @@ lip install github.com/glibcxx/figure_hack
 - pause：暂停游戏
 - resume：恢复游戏
 - reset：tps设为20
+
+可以在`config.json`中关闭，以防止同功能冲突
 
 ### 邻接表更新可视化
 
