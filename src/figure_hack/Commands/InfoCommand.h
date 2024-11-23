@@ -1,5 +1,6 @@
 #pragma once
 
+#include <span>
 #include <ll/api/chrono/GameChrono.h>
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>

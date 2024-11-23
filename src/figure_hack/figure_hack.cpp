@@ -1,3 +1,4 @@
+#include <span>
 #include "figure_hack.h"
 
 #include <ll/api/Config.h>

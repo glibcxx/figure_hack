@@ -1,5 +1,6 @@
 #pragma once
 
+#include <span>
 #include <array>
 #include <ll/api/event/EventBus.h>
 #include <ll/api/event/Listener.h>

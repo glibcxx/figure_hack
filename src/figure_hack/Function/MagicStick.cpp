@@ -1,5 +1,7 @@
 #include "MagicStick.h"
 
+#include <span>
+
 #include <ll/api/event/EventBus.h>
 #include <ll/api/event/Listener.h>
 #include <ll/api/event/player/PlayerAttackEvent.h>
@@ -7,8 +9,8 @@
 #include <ll/api/event/player/PlayerInteractBlockEvent.h>
 #include <ll/api/event/player/PlayerSwingEvent.h>
 #include <ll/api/memory/Hook.h>
-#include <mc/server/commands/CommandOutput.h>
 
+#include <mc/server/commands/CommandOutput.h>
 #include <mc/world/item/Item.h>
 #include <mc/world/item/enchanting/EnchantUtils.h>
 #include <mc/world/level/BlockSource.h>
