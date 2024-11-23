@@ -8,6 +8,7 @@
 #include "Commands/Commands.h"
 #include "Function/MagicStick.h"
 #include "Utils/BlockSelector.h"
+#include <span>
 
 
 namespace fh {

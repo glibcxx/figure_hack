@@ -1,10 +1,15 @@
 #pragma once
 
+#include <ll/api/command/Command.h>
+#include <ll/api/command/CommandHandle.h>
+#include <ll/api/command/CommandRegistrar.h>
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
+
+#include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
 
-#include "Commands.h"
+#include "figure_hack/figure_hack.h"
 #include "mc/world/Minecraft.h"
 
 namespace fh {
@@ -24,6 +29,8 @@ struct TickCommand {
     };
 
     static void init() {
+        if (!figureHack::getInstance().getConfig().function.tick_command) return;
+
         using ll::i18n_literals::operator""_tr;
         auto& commandHandle = ll::command::CommandRegistrar::getInstance().getOrCreateCommand(
             "tick",

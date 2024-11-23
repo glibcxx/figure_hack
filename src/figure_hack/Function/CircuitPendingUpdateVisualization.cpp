@@ -1,16 +1,14 @@
 #include "CircuitPendingUpdateVisualization.h"
 
-#include <algorithm>
-#include <cstddef>
 #include <ll/api/memory/Hook.h>
 #include <ll/api/service/Bedrock.h>
 #include <ll/api/thread/ThreadPool.h>
+#include <ll/api/schedule/Scheduler.h>
 #include <mc/world/Facing.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/ChunkPos.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/block/Block.h>
-#include <mc/world/level/block/utils/TargetBlock_Internal.h>
 #include <mc/world/level/chunk/LevelChunk.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
 #include <mc/world/redstone/circuit/CircuitTrackingInfo.h>
@@ -92,7 +90,7 @@ LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
     void,
     BlockSource* region
 ) {
-    if (figureHack::getInstance().getConfig().enable_microtick) {
+    if (figureHack::getInstance().getConfig().function.enable_microtick) {
         if (!this->mPendingUpdates.empty() && start) {
             isPendingUpdatesHooking_flag = true;
             threadPool.addTask([this, region]() {

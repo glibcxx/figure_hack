@@ -21,7 +21,8 @@
                 "no_circuit_component": "{}: not a redstone component",
                 "no_block": "No block seleted",
                 "invalid_player": "Invalid excutor. It must be a player",
-                "no_source": "{}: no source"
+                "no_source": "{}: no source",
+                "no_actor_found": "No actor found"
             },
             "rs_comp_info": "{}: strength {}, source {}, ptr {:X}, {}",
             "sources_of": "source list of {} ->",
@@ -50,7 +51,7 @@
         "unknown": "Unknown",
         "undefined": "Undefined",
         "mask": "Mask",
-        "base_circuit": "Base circuit",
+        "base_circuit": "BaseCircuit",
         "rail": "Rail",
         "consumer": "Consumer",
         "powered_block": "PoweredBlock",

@@ -1,13 +1,19 @@
 #pragma once
 
+#include <ll/api/command/Command.h>
+#include <ll/api/command/CommandHandle.h>
+#include <ll/api/command/CommandRegistrar.h>
 #include <ll/api/service/Bedrock.h>
+#include <ll/api/i18n/I18n.h>
+
+#include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/BlockTickingQueue.h>
 #include <mc/world/level/Level.h>
+#include <mc/world/actor/Actor.h>
 #include <mc/world/level/chunk/LevelChunk.h>
 
-#include "Commands.h"
 #include "figure_hack/Utils/BlockSelector.h"
 
 namespace fh {
@@ -72,7 +78,7 @@ struct QueryPendingTickCommand {
                 (void)copiedQueue.pop();
             }
             copiedQueue.mC = std::move(nextTickQueue);
-            uint64_t now = region.getLevel().getCurrentTick().t;
+            uint64_t now   = region.getLevel().getCurrentTick().t;
             for (; !copiedQueue.empty();) {
                 auto& blockTick = copiedQueue.top();
                 output.success(

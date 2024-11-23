@@ -21,7 +21,8 @@
                 "no_circuit_component": "{}: 不是红石元件",
                 "no_block": "未选中方块",
                 "invalid_player": "无效命令执行者，必须由玩家执行",
-                "no_source": "{}: 没有信号源"
+                "no_source": "{}: 没有信号源",
+                "no_actor_found": "未找到实体"
             },
             "rs_comp_info": "{}: 强度 {}, 信号源 {}, 指针 {:X}, {}",
             "sources_of": "{} 的信号源列表 ->",

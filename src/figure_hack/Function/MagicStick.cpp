@@ -70,7 +70,7 @@ void MagicStick::enable() {
                         utils::executeCommand(player, fmt::format("info source {} {} {}", pos.x, pos.y, pos.z));
                         break;
                     case 4:
-                        if (figureHack::getInstance().getConfig().enable_microtick) {
+                        if (figureHack::getInstance().getConfig().function.enable_microtick) {
                             player.sendMessage(fmt::format(
                                 "{}: {}",
                                 pos.toString(),

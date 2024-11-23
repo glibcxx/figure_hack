@@ -1,15 +1,9 @@
 #pragma once
 
-#include <ll/api/command/Command.h>
-#include <ll/api/command/CommandHandle.h>
-#include <ll/api/command/CommandRegistrar.h>
-#include <mc/server/commands/CommandOutput.h>
-
 #include "GiveMagicStick.h"
-#include "Info.h"
+#include "InfoCommand.h"
 #include "QueryPendingTick.h"
-#include "Tick.h"
-
+#include "TickCommand.h"
 
 namespace fh {
 
