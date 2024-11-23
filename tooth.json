@@ -3,9 +3,9 @@
     "tooth": "github.com/glibcxx/figure_hack",
     "version": "0.1.0",
     "info": {
-        "name": "No Name",
-        "description": "No Description",
-        "author": "me",
+        "name": "Figure Hack",
+        "description": "一个有助于分析红石系统的小工具",
+        "author": "glibcxx",
         "tags": ["levilamina", "mod"]
     },
     "asset_url": "https://github.com/glibcxx/figure_hack/releases/download/v0.1.0/figure_hack-windows-x64.zip",
