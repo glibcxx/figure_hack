@@ -5,7 +5,6 @@
 #include <mc/world/level/dimension/Dimension.h>
 #include <mc/world/phys/AABB.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
-#include <optional>
 
 
 namespace fh {
@@ -38,9 +37,6 @@ std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, cons
         false
     );
     Actor* retActor = nullptr;
-    std::cout << "[actors count]" << actors.size() << '\n';
-    std::cout << "[from]" << from.toString() << '\n';
-    std::cout << "[to]" << to.toString() << '\n';
     for (auto&& actor : actors) {
         const AABB& actorBB = actor->getAABB();
         if ((actorBB.contains(from) || actorBB.clip(from, to)) // from -> to 与 actorBB 有交点
