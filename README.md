@@ -4,7 +4,7 @@
 
 ## 安装
 
-本插件基于bds 1.21.3.01 开发，不保证兼容以前的版本
+本插件基于 bds 1.21.3.01 开发，不保证兼容以前的版本
 
 1. 安装插件：
 
@@ -14,18 +14,18 @@ lip install github.com/glibcxx/figure_hack
 
 2. 安装行为包和资源包：
 
-从release页面下载`assets.mcaddon`，双击安装。
+从 release 页面下载`assets.mcaddon`，双击安装。
 
-然后将`assets.mcaddon`内的BP文件夹复制到bds的`development_behavior_packs`文件夹内。
+然后将`assets.mcaddon`内的 BP 文件夹复制到 bds 的`development_behavior_packs`文件夹内。
 
 在存档的`world_behavior_packs.json`文件内，确保包含下面内容：
 
 ```json
 [
-	{
-		"pack_id" : "495e0ad1-7fe1-40bc-a8b7-00b097a3a392",
-		"version" : [ 1, 0, 0 ]
-	}
+    {
+        "pack_id": "495e0ad1-7fe1-40bc-a8b7-00b097a3a392",
+        "version": [1, 0, 0]
+    }
 ]
 ```
 
@@ -75,7 +75,7 @@ lip install github.com/glibcxx/figure_hack
 /info actor
 ```
 
-查询玩家指向的实体信息。目前给出坐标、速度、runtimeId这三个信息。
+查询玩家指向的实体信息。目前给出坐标、速度、runtimeId 这三个信息。
 
 ### 修改游戏速度
 
@@ -83,10 +83,10 @@ lip install github.com/glibcxx/figure_hack
 /tick (数字)/pause/resume/reset
 ```
 
-- 数字：tps, 默认20
-- pause：暂停游戏
-- resume：恢复游戏
-- reset：tps设为20
+-   数字：tps, 默认 20
+-   pause：暂停游戏
+-   resume：恢复游戏
+-   reset：tps 设为 20
 
 可以在`config.json`中关闭，以防止同功能冲突
 
