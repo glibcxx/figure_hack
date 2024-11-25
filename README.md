@@ -101,3 +101,19 @@ lip install github.com/glibcxx/figure_hack
 再次右键可以取消选中，切换模式可以一键取消选中所有。
 
 更新速度受 tick 指令影响。
+
+### 生成任意下落的方块
+
+```
+/falling 方块命名空间id/方块数字Id [x y z]
+```
+
+坐标缺省时，为指令执行者坐标。命名空间 id 可以为原版指令方块列表中不包含的 id，比如`moving_block`
+
+### 获取任意方块物品
+
+```
+/blockitem 方块命名空间id/方块数字Id
+```
+
+执行后会强行给予玩家方块对应的物品。命名空间 id 可以为原版指令方块列表中不包含的 id，比如`moving_block`
