@@ -30,3 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2024-10-04
 
 figure hack 的第一个 release
+
+[0.3.0]: https://github.com/glibcxx/figure_hack/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/glibcxx/figure_hack/compare/v0.1.0...v0.2.1
+[0.1.0]: https://github.com/glibcxx/figure_hack/releases/tag/v0.1.0
