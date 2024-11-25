@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CustomFallingBlock.h"
 #include "GiveMagicStick.h"
 #include "InfoCommand.h"
 #include "QueryPendingTick.h"
@@ -13,6 +14,7 @@ struct Commands {
         GiveMagicStickCommand::init();
         TickCommand::init();
         QueryPendingTickCommand::init();
+        CustomFallingBlockCommand::init();
     }
 };
 
