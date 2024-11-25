@@ -1,6 +1,8 @@
 #pragma once
 
 #include "mc/server/commands/CommandPosition.h"
+#include <cstdint>
+#include <limits>
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
@@ -11,10 +13,10 @@
 #include <mc/server/commands/CommandBlockNameResult.h>
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
+#include <mc/server/commands/CommandRawText.h>
+
 
 #include <mc/world/Minecraft.h>
-#include <mc/world/actor/Actor.h>
-#include <mc/world/actor/ActorFactory.h>
 #include <mc/world/actor/item/FallingBlock.h>
 #include <mc/world/actor/player/Player.h>
 #include <mc/world/level/BlockSource.h>
@@ -25,13 +27,26 @@
 namespace fh {
 
 struct CustomFallingBlockCommand {
+    static constexpr float INVALID_POSITION_Y = std::numeric_limits<float>::min();
     struct Params {
         CommandBlockName blockName;
-        CommandPosition  blockPos;
+        CommandPosition  blockPos{
+             {0, INVALID_POSITION_Y, 0}
+        };
     };
 
-    struct ParamsWithoutPos {
-        CommandBlockName blockName;
+    struct ParamsBlockId {
+        int             blockId;
+        CommandPosition blockPos{
+            {0, INVALID_POSITION_Y, 0}
+        };
+    };
+
+    struct ParamsNamespacedId {
+        CommandRawText  namespaceId;
+        CommandPosition blockPos{
+            {0, INVALID_POSITION_Y, 0}
+        };
     };
 
     static void init() {
@@ -43,36 +58,57 @@ struct CustomFallingBlockCommand {
         );
         commandHandle.overload<Params>()
             .required("blockName")
-            .required("blockPos")
+            .optional("blockPos")
             .execute([](const CommandOrigin& origin, CommandOutput& output, const Params& params) {
-                BlockSource& region = origin.getDimension()->getBlockSourceFromMainChunkSource();
-                BlockPos     pos    = params.blockPos.getBlockPos(origin.getBlockPosition());
-                const Block* block  = params.blockName.resolveBlock(0).getBlock();
-                if (block) {
-                    region.setBlock(pos, *block, 3, nullptr, nullptr);
-                    static_cast<const FallingBlock&>(block->getLegacyBlock())
-                        .FallingBlock::startFalling(region, pos, *block, false);
-                    output.success("falling success");
-                } else {
-                    output.error("error block");
-                }
+                CustomFallingBlockCommand::_spwanFallingBlock(
+                    output,
+                    origin.getDimension()->getBlockSourceFromMainChunkSource(),
+                    params.blockPos.mOffset.y != INVALID_POSITION_Y
+                        ? params.blockPos.getBlockPos(origin.getBlockPosition())
+                        : origin.getBlockPosition(),
+                    params.blockName.resolveBlock(0).getBlock()
+                );
             });
 
-        commandHandle.overload<ParamsWithoutPos>()
-            .required("blockName")
-            .execute([](const CommandOrigin& origin, CommandOutput& output, const ParamsWithoutPos& params) {
-                BlockSource& region = origin.getDimension()->getBlockSourceFromMainChunkSource();
-                BlockPos     pos    = origin.getBlockPosition();
-                const Block* block  = params.blockName.resolveBlock(0).getBlock();
-                if (block) {
-                    region.setBlock(pos, *block, 3, nullptr, nullptr);
-                    static_cast<const FallingBlock&>(block->getLegacyBlock())
-                        .FallingBlock::startFalling(region, pos, *block, false);
-                    output.success("falling success");
-                } else {
-                    output.error("error block");
-                }
+        commandHandle.overload<ParamsBlockId>()
+            .required("blockId")
+            .optional("blockPos")
+            .execute([](const CommandOrigin& origin, CommandOutput& output, const ParamsBlockId& params) {
+                CustomFallingBlockCommand::_spwanFallingBlock(
+                    output,
+                    origin.getDimension()->getBlockSourceFromMainChunkSource(),
+                    params.blockPos.mOffset.y != INVALID_POSITION_Y
+                        ? params.blockPos.getBlockPos(origin.getBlockPosition())
+                        : origin.getBlockPosition(),
+                    Block::tryGetFromRegistry(params.blockId, 0)
+                );
             });
+
+        commandHandle.overload<ParamsNamespacedId>()
+            .required("namespaceId")
+            .optional("blockPos")
+            .execute([](const CommandOrigin& origin, CommandOutput& output, const ParamsNamespacedId& params) {
+                CustomFallingBlockCommand::_spwanFallingBlock(
+                    output,
+                    origin.getDimension()->getBlockSourceFromMainChunkSource(),
+                    params.blockPos.mOffset.y != INVALID_POSITION_Y
+                        ? params.blockPos.getBlockPos(origin.getBlockPosition())
+                        : origin.getBlockPosition(),
+                    Block::tryGetFromRegistry(params.namespaceId.getText())
+                );
+            });
+    }
+
+    static void
+    _spwanFallingBlock(CommandOutput& output, BlockSource& region, const BlockPos& pos, const Block* block) {
+        if (block) {
+            region.setBlock(pos, *block, 3, nullptr, nullptr);
+            static_cast<const FallingBlock&>(block->getLegacyBlock())
+                .FallingBlock::startFalling(region, pos, *block, false);
+            output.success("falling success");
+        } else {
+            output.error("error block");
+        }
     }
 };
 
