@@ -66,7 +66,7 @@ void CustomFallingBlockCommand::init() {
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
                 params.blockPos.mOffset.y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(origin.getBlockPosition())
                                                                 : origin.getBlockPosition(),
-                Block::tryGetFromRegistry(params.blockId, 0)
+                Block::tryGetFromRegistry(params.blockId, 0).as_ptr()
             );
         });
 
@@ -79,7 +79,7 @@ void CustomFallingBlockCommand::init() {
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
                 params.blockPos.mOffset.y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(origin.getBlockPosition())
                                                                 : origin.getBlockPosition(),
-                Block::tryGetFromRegistry(params.namespaceId.getText())
+                Block::tryGetFromRegistry(params.namespaceId.getText()).as_ptr()
             );
         });
 }
