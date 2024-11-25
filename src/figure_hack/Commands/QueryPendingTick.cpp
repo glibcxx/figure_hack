@@ -1,7 +1,5 @@
 #include "QueryPendingTick.h"
 
-#include <span>
-
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
@@ -57,7 +55,12 @@ void QueryPendingTickCommand::init() {
         });
 }
 
-void QueryPendingTickCommand::getPtInfoAtChunkPos(BlockSource& region, const ChunkPos& chunkPos, CommandOutput& output, int displayTime) {
+void QueryPendingTickCommand::getPtInfoAtChunkPos(
+    BlockSource&    region,
+    const ChunkPos& chunkPos,
+    CommandOutput&  output,
+    int             displayTime
+) {
     BlockTickingQueue& pt            = region.getChunk(chunkPos)->getTickQueue();
     auto               nextTickQueue = ll::memory::dAccess<std::vector<BlockTickingQueue::BlockTick>>(&pt, 16);
     BlockTickingQueue::TickDataSet copiedQueue;

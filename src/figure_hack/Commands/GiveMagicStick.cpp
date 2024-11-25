@@ -1,5 +1,7 @@
 #include "GiveMagicStick.h"
 
+#include <span>
+
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>

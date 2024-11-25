@@ -1,6 +1,6 @@
-#pragma once
-
 #include "CustomFallingBlock.h"
+
+#include <span>
 
 #include <cstdint>
 #include <limits>
