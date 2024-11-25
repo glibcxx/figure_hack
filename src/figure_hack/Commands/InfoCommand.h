@@ -1,6 +1,7 @@
 #pragma once
 
 #include <span>
+
 #include <ll/api/chrono/GameChrono.h>
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
@@ -72,12 +73,7 @@ struct InfoCommand {
         );
         commandHandle.overload<ParamsWithPos>().required("mode").required("pos").execute(
             [](const CommandOrigin& origin, CommandOutput& output, const ParamsWithPos& params) {
-                Actor* entity = origin.getEntity();
-                if (!entity || !entity->isPlayer()) { // 必须由玩家执行
-                    output.error("command.info.error.invalid_player"_tr());
-                    return;
-                }
-                _excute(origin, output, params.mode, params.pos.getBlockPos(entity->getPosition()));
+                _excute(origin, output, params.mode, params.pos.getBlockPos(origin.getBlockPosition()));
             }
         );
     }
@@ -92,10 +88,15 @@ protected:
             return;
         }
         BlockSource& region = entity->getDimensionBlockSource();
+        BSelector::add(region.getDimensionId(), pos, {.color = BSelector::Color::pink});
         switch (mode) {
         case Mode::actor: {
-            auto data =
-                fh::actorInfo(entity, region, entity->getEyePos(), entity->getEyePos() + entity->getViewVector() * 5.2f);
+            auto data = fh::actorInfo(
+                entity,
+                region,
+                entity->getEyePos(),
+                entity->getEyePos() + entity->getViewVector() * 5.2f
+            );
             if (data) {
                 output.success(
                     "[{}] {} id {} ---\n  pos ({:.16f}, {:.16f}, {:.16f}),\n  vel |({:.16f}, {:.16f}, {:.16f})| =  "

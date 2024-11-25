@@ -1,9 +1,9 @@
 #include "CircuitPendingUpdateVisualization.h"
 
 #include <ll/api/memory/Hook.h>
+#include <ll/api/schedule/Scheduler.h>
 #include <ll/api/service/Bedrock.h>
 #include <ll/api/thread/ThreadPool.h>
-#include <ll/api/schedule/Scheduler.h>
 #include <mc/world/Facing.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/ChunkPos.h>
@@ -16,6 +16,7 @@
 #include <mc/world/redstone/circuit/components/PoweredBlockComponent.h>
 #include <mc/world/redstone/circuit/components/TransporterComponent.h>
 #include <mutex>
+
 
 
 #include "figure_hack/Utils/BlockSelector.h"

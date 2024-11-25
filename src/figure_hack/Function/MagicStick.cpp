@@ -1,7 +1,5 @@
 #include "MagicStick.h"
 
-#include <span>
-
 #include <ll/api/event/EventBus.h>
 #include <ll/api/event/Listener.h>
 #include <ll/api/event/player/PlayerAttackEvent.h>
