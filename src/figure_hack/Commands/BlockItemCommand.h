@@ -26,6 +26,7 @@ struct BlockItemCommand {
 
 protected:
     static void _additem(CommandOutput& output, Actor* entity, const Block* block);
+    static void _addAirItem(CommandOutput& output, Actor* entity);
 };
 
 } // namespace fh

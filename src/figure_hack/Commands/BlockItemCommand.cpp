@@ -1,4 +1,5 @@
 #include "BlockItemCommand.h"
+#include "ll/api/memory/Memory.h"
 
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
@@ -9,6 +10,7 @@
 
 #include <mc/world/actor/player/Player.h>
 #include <mc/world/item/ItemInstance.h>
+#include <mc/world/level/block/AirBlock.h>
 #include <mc/world/level/block/Block.h>
 
 
@@ -31,10 +33,6 @@ void BlockItemCommand::init() {
                 return;
             }
             const Block* block = params.blockName.resolveBlock(0).getBlock();
-            if (!block) {
-                output.error("error block");
-                return;
-            }
             BlockItemCommand::_additem(output, entity, block);
         });
 
@@ -45,16 +43,17 @@ void BlockItemCommand::init() {
                 output.error("invalid executor");
                 return;
             }
+            // if (params.blockId == 0) {
+            //     BlockItemCommand::_addAirItem(output, entity);
+            //     return;
+            // }
             auto block = Block::tryGetFromRegistry(params.blockId, 0);
-            if (!block) {
-                output.error("error block");
-                return;
-            }
-            BlockItemCommand::_additem(output, entity, block);
+            BlockItemCommand::_additem(output, entity, block.as_ptr());
         }
     );
 
     commandHandle.overload<ParamsNamespacedId>()
+        .text("full")
         .required("namespaceId")
         .execute([](const CommandOrigin& origin, CommandOutput& output, const ParamsNamespacedId& params) {
             Actor* entity = origin.getEntity();
@@ -63,11 +62,7 @@ void BlockItemCommand::init() {
                 return;
             }
             auto block = Block::tryGetFromRegistry(params.namespaceId.getText());
-            if (!block) {
-                output.error("error block");
-                return;
-            }
-            BlockItemCommand::_additem(output, entity, block);
+            BlockItemCommand::_additem(output, entity, block.as_ptr());
         });
 }
 
@@ -82,5 +77,18 @@ void BlockItemCommand::_additem(CommandOutput& output, Actor* entity, const Bloc
     player.refreshInventory();
     output.success("add item success");
 }
+
+// void BlockItemCommand::_addAirItem(CommandOutput& output, Actor* entity) {
+//     Player&      player = *static_cast<Player*>(entity);
+//     ItemStack    itemstack{"glass"};
+//     const Block* airBlock = Block::tryGetFromRegistry("air");
+//     itemstack.mBlock      = airBlock;
+//     auto& mLegacyBlock    = ll::memory::dAccess<WeakPtr<BlockLegacy>>(itemstack.mItem.get(), 456);
+//     mLegacyBlock          = airBlock->getLegacyBlock().createWeakPtr();
+//     player.add(itemstack);
+//     player.refreshInventory();
+//     output.success("add item success");
+// }
+
 
 } // namespace fh
