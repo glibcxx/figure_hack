@@ -1,6 +1,7 @@
 #include "Commands.h"
 
 #include "BlockItemCommand.h"
+#include "CheckChunkSource.h"
 #include "CustomFallingBlock.h"
 #include "GiveMagicStick.h"
 #include "InfoCommand.h"
@@ -14,4 +15,5 @@ void fh::Commands::initAll() {
     QueryPendingTickCommand::init();
     CustomFallingBlockCommand::init();
     BlockItemCommand::init();
+    CheckChunkSourceCommand::init();
 }
