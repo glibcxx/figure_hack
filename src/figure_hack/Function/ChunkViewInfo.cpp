@@ -43,10 +43,10 @@ void sendToPlayerOrConsole(Player* player, std::string_view msg) {
 
 void queryCurrentChunkSourceInfo(Player* player) {
     if (cappturedChunkSources.empty()) {
-        sendToPlayerOrConsole(player, "[ChunkSource] no ChunkSource\n");
+        sendToPlayerOrConsole(player, "[ChunkSource] no ChunkSource");
         return;
     }
-    sendToPlayerOrConsole(player, fmt::format("[Info] {} captured ChunkSources ->\n", cappturedChunkSources.size()));
+    sendToPlayerOrConsole(player, fmt::format("[Info] {} captured ChunkSources ->", cappturedChunkSources.size()));
     size_t removed_count = 0;
     for (auto it = cappturedChunkSources.begin(); it != cappturedChunkSources.end();) {
         auto sptr = it->second.lock();
@@ -55,7 +55,7 @@ void queryCurrentChunkSourceInfo(Player* player) {
             sendToPlayerOrConsole(
                 player,
                 fmt::format(
-                    "  center: {}, size: {}, circle: {}, dimId: {} {:X}\n",
+                    "  center: {}, size: {}, circle: {}, dimId: {} {:X}",
                     getBoundsCenter(chunkSource->mArea.mBounds).toString(),
                     chunkSource->mArea.mBounds.mDim.toString(),
                     chunkSource->mArea.mCircle,
@@ -68,8 +68,8 @@ void queryCurrentChunkSourceInfo(Player* player) {
             ++removed_count;
             it = cappturedChunkSources.erase(it);
         }
-        if (removed_count > 0) sendToPlayerOrConsole(player, fmt::format("  {} ChunkSources removed", removed_count));
     }
+    if (removed_count > 0) sendToPlayerOrConsole(player, fmt::format("  {} ChunkSources removed", removed_count));
 }
 
 LL_AUTO_TYPE_INSTANCE_HOOK(
