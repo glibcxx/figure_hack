@@ -1,7 +1,5 @@
 #include "TickCommand.h"
 
-#include <span>
-
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
@@ -15,7 +13,6 @@
 #include "mc/world/Minecraft.h"
 
 namespace fh {
-
 
 void TickCommand::init() {
     if (!figureHack::getInstance().getConfig().function.tick_command) return;

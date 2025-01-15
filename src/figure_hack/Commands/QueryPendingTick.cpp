@@ -6,15 +6,14 @@
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
 
-
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
 #include <mc/world/actor/Actor.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/BlockTickingQueue.h>
+#include <mc/world/level/ChunkPos.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/chunk/LevelChunk.h>
-
 
 #include "figure_hack/Utils/BlockSelector.h"
 
@@ -61,47 +60,46 @@ void QueryPendingTickCommand::getPtInfoAtChunkPos(
     CommandOutput&  output,
     int             displayTime
 ) {
-    BlockTickingQueue& pt            = region.getChunk(chunkPos)->getTickQueue();
-    auto               nextTickQueue = ll::memory::dAccess<std::vector<BlockTickingQueue::BlockTick>>(&pt, 16);
-    BlockTickingQueue::TickDataSet copiedQueue;
-    copiedQueue.mC = std::move(nextTickQueue);
+    BlockTickingQueue&             pt            = region.getChunk(chunkPos)->getTickQueue();
+    auto                           nextTickQueue = pt.mNextTickQueue;
+    BlockTickingQueue::TickDataSet copiedQueue   = nextTickQueue;
     if (!copiedQueue.empty()) {
         BlockTickingQueue::TickDataSet activeQueue;
         output.success(
             "[{}] chunk {} has {} pendingTicks ->",
-            region.getLevel().getCurrentTick().t,
+            region.getLevel().getCurrentTick().tickID,
             chunkPos.toString(),
             copiedQueue.size()
         );
         for (; !copiedQueue.empty();) {
             auto& blockTick = copiedQueue.top();
             if (blockTick.mIsRemoved) {
-                output.success("  {}: removed", blockTick.mData.mPos.toString());
+                output.success("  {}: removed", blockTick.mData.pos->toString());
                 BSelector::add(
                     region.getDimensionId(),
-                    blockTick.mData.mPos,
+                    blockTick.mData.pos,
                     {.color = BSelector::Color::red, .lifespan = displayTime}
                 );
             } else {
-                nextTickQueue.emplace_back(blockTick);
+                nextTickQueue->mC.emplace_back(blockTick);
             }
             (void)copiedQueue.pop();
         }
-        copiedQueue.mC = std::move(nextTickQueue);
-        uint64_t now   = region.getLevel().getCurrentTick().t;
+        copiedQueue  = std::move(nextTickQueue);
+        uint64_t now = region.getLevel().getCurrentTick().tickID;
         for (; !copiedQueue.empty();) {
             auto& blockTick = copiedQueue.top();
             output.success(
                 "  {}: tick time {}, priority {}, {}",
-                blockTick.mData.mPos.toString(),
-                blockTick.mData.mTick.t,
-                blockTick.mData.mPriorityOffset,
-                blockTick.mData.mBlock->getName().getString()
+                blockTick.mData.pos->toString(),
+                blockTick.mData.tick->tickID,
+                blockTick.mData.priorityOffset,
+                blockTick.mData.mBlock->buildDescriptionName()
             );
             BSelector::add(
                 region.getDimensionId(),
-                blockTick.mData.mPos,
-                {.color    = blockTick.mData.mTick.t <= now ? BSelector::Color::green : BSelector::Color::yellow,
+                blockTick.mData.pos,
+                {.color    = blockTick.mData.tick->tickID <= now ? BSelector::Color::green : BSelector::Color::yellow,
                  .lifespan = displayTime}
             );
             (void)copiedQueue.pop();

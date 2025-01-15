@@ -1,12 +1,11 @@
 #include "GiveMagicStick.h"
 
-#include <span>
-
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
+#include <mc/safety/RedactableString.h>
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
 
@@ -30,8 +29,10 @@ void GiveMagicStickCommand::init() {
         if (entity && entity->isPlayer()) {
             Player&   player = *static_cast<Player*>(entity);
             ItemStack itemStack{"stick", 1};
-            itemStack.setCustomName("item.magic_stick.name"_tr(MagicStick::mode_name[0]));
-            EnchantUtils::applyEnchant(itemStack, Enchant::Type::MiningEfficiency, 1, true);
+            itemStack.setCustomName(
+                ::Bedrock::Safety::RedactableString{"item.magic_stick.name"_tr(MagicStick::mode_name[0])}
+            );
+            EnchantUtils::applyEnchant(itemStack, Enchant::Type::Efficiency, 1, true);
             player.add(itemStack);
             player.refreshInventory();
         }

@@ -2,11 +2,11 @@
 
 #include <ll/api/event/EventBus.h>
 #include <ll/api/event/Listener.h>
-#include <ll/api/event/player/PlayerLeaveEvent.h>
 #include <ll/api/event/server/ServerStoppingEvent.h>
 #include <ll/api/memory/Hook.h>
 #include <ll/api/service/Bedrock.h>
 #include <ll/api/utils/StringUtils.h>
+#include <mc/deps/core/string/HashedString.h>
 #include <mc/server/ServerLevel.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/chunk/LevelChunk.h>

@@ -1,7 +1,5 @@
 #include "InfoCommand.h"
 
-#include <span>
-
 #include <ll/api/chrono/GameChrono.h>
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
@@ -9,9 +7,9 @@
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
 
+#include <mc/common/ActorRuntimeID.h>
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
-#include <mc/world/ActorRuntimeID.h>
 #include <mc/world/Minecraft.h>
 #include <mc/world/actor/Actor.h>
 #include <mc/world/actor/player/Player.h>
@@ -39,7 +37,7 @@ void InfoCommand::init() {
     );
     commandHandle.overload<Params>().required("mode").optional("pos").execute(
         [](const CommandOrigin& origin, CommandOutput& output, const Params& params) {
-            if (params.pos.mOffset.y == INVALID_POSITION_Y) {
+            if (params.pos.mOffset->y == INVALID_POSITION_Y) {
                 // 指令参数未指定坐标
                 Actor* entity = origin.getEntity();
                 if (!entity || !entity->isPlayer()) { // 必须由玩家执行
@@ -54,15 +52,14 @@ void InfoCommand::init() {
                         output.error("command.info.error.no_block"_tr());
                         return;
                     }
-                    _excute(origin, output, params.mode, result.mBlockPos);
+                    _excute(origin, output, params.mode, result.mBlock);
                 }
             } else {
-                _excute(origin, output, params.mode, params.pos.getBlockPos(origin.getBlockPosition()));
+                _excute(origin, output, params.mode, params.pos.getBlockPos(origin.getBlockPosition(), Vec3{0}));
             }
         }
     );
 }
-
 
 void InfoCommand::_excute(const CommandOrigin& origin, CommandOutput& output, Mode mode, const BlockPos& pos) {
     using ll::i18n_literals::operator""_tr;
@@ -81,9 +78,9 @@ void InfoCommand::_excute(const CommandOrigin& origin, CommandOutput& output, Mo
             output.success(
                 "[{}] {} id {} ---\n  pos ({:.16f}, {:.16f}, {:.16f}),\n  vel |({:.16f}, {:.16f}, {:.16f})| =  "
                 "{:.16f}",
-                origin.getLevel()->getCurrentTick().t,
+                origin.getLevel()->getCurrentTick().tickID,
                 data->typeId,
-                data->runtimeId.id,
+                data->runtimeId.rawID,
                 data->pos.x,
                 data->pos.y,
                 data->pos.z,

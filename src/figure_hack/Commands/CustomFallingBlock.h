@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mc/deps/core/math/Vec3.h>
 #include <mc/server/commands/CommandBlockName.h>
 #include <mc/server/commands/CommandBlockNameResult.h>
 #include <mc/server/commands/CommandPosition.h>

@@ -2,11 +2,10 @@
 
 #include <string>
 
-#include <mc/enums/CircuitComponentType.h>
-#include <mc/world/ActorRuntimeID.h>
-#include <mc/world/ActorUniqueID.h>
+#include <mc/common/ActorRuntimeID.h>
+#include <mc/common/ActorUniqueID.h>
 #include <mc/world/redstone/circuit/components/BaseCircuitComponent.h>
-
+#include <mc/world/redstone/circuit/components/CircuitComponentType.h>
 
 namespace fh {
 struct BlockInfo {

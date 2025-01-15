@@ -4,25 +4,29 @@
 #include <mc/world/level/block/Block.h>
 #include <mc/world/level/dimension/Dimension.h>
 #include <mc/world/phys/AABB.h>
+#include <mc/world/phys/AABBHitResult.h>
+#include <mc/world/redstone/circuit/CircuitSceneGraph.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
 
 
 namespace fh {
 BlockInfo blockInfoAtPos(BlockSource& region, const BlockPos& pos) {
     const Block& block = region.getBlock(pos);
-    return {block.getName().getString()};
+    return {block.buildDescriptionName()};
 }
 
 std::optional<CircuitInfo> circuitInfoAtPos(BlockSource& region, const BlockPos& pos) {
-    CircuitSystem&        system = region.getDimension().getCircuitSystem();
-    CircuitSceneGraph&    graph  = system.mSceneGraph;
-    BaseCircuitComponent* comp   = graph.getBaseComponent(pos);
-    if (comp) {
+    CircuitSystem&     system = region.getDimension().getCircuitSystem();
+    CircuitSceneGraph& graph  = system.mSceneGraph;
+    auto               comp   = graph.mAllComponents.find(pos);
+    if (comp != graph.mAllComponents.end()) {
         return {
-            {.typeId   = comp->getCircuitComponentType(),
-             .rawPtr   = comp,
-             .sources  = comp->mSources,
-             .strength = comp->getStrength()}
+            CircuitInfo{
+                        .typeId   = comp->second->getCircuitComponentType(),
+                        .rawPtr   = comp->second.get(),
+                        .sources  = comp->second->mSources.get(),
+                        .strength = comp->second->getStrength()
+            }
         };
     } else {
         return std::nullopt;
@@ -39,7 +43,7 @@ std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, cons
     Actor* retActor = nullptr;
     for (auto&& actor : actors) {
         const AABB& actorBB = actor->getAABB();
-        if ((actorBB.contains(from) || actorBB.clip(from, to)) // from -> to 与 actorBB 有交点
+        if ((actorBB.contains(from) || (actorBB.clip(from, to).mUnk8b4661.as<bool>())) // from -> to 与 actorBB 有交点
             && (!retActor || from.distanceToSqr(actor->getPosition()) < from.distanceToSqr(retActor->getPosition())
             )) { // 只取最近的一个
             retActor = actor;

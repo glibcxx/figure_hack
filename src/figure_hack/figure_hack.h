@@ -12,11 +12,11 @@ class figureHack {
 public:
     static figureHack& getInstance();
 
-    figureHack(ll::mod::NativeMod& self) : mSelf(self) {}
+    figureHack() : mSelf(*ll::mod::NativeMod::current()) {}
 
     [[nodiscard]] ll::mod::NativeMod& getSelf() const { return mSelf; }
 
-    Config &getConfig() { return mConfig; }
+    Config& getConfig() { return mConfig; }
 
     /// @return True if the mod is loaded successfully.
     bool load();

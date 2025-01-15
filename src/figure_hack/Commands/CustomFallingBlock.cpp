@@ -1,27 +1,23 @@
 #include "CustomFallingBlock.h"
 
-#include <span>
-
-#include <cstdint>
-#include <limits>
 #include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
 
-
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
 
-
 #include <mc/world/Minecraft.h>
-#include <mc/world/actor/item/FallingBlock.h>
 #include <mc/world/actor/player/Player.h>
+#include <mc/world/level/BlockPos.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/block/Block.h>
+#include <mc/world/level/block/FallingBlock.h>
 #include <mc/world/level/dimension/Dimension.h>
+
 
 namespace fh {
 
@@ -51,8 +47,9 @@ void CustomFallingBlockCommand::init() {
             _spwanFallingBlock(
                 output,
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
-                params.blockPos.mOffset.y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(origin.getBlockPosition())
-                                                                : origin.getBlockPosition(),
+                params.blockPos.mOffset->y != INVALID_POSITION_Y
+                    ? params.blockPos.getBlockPos(origin.getBlockPosition(), Vec3{0})
+                    : origin.getBlockPosition(),
                 params.blockName.resolveBlock(0).getBlock()
             );
         });
@@ -64,8 +61,9 @@ void CustomFallingBlockCommand::init() {
             _spwanFallingBlock(
                 output,
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
-                params.blockPos.mOffset.y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(origin.getBlockPosition())
-                                                                : origin.getBlockPosition(),
+                params.blockPos.mOffset->y != INVALID_POSITION_Y
+                    ? params.blockPos.getBlockPos(origin.getBlockPosition(), Vec3{0})
+                    : origin.getBlockPosition(),
                 Block::tryGetFromRegistry(params.blockId, 0).as_ptr()
             );
         });
@@ -77,8 +75,9 @@ void CustomFallingBlockCommand::init() {
             _spwanFallingBlock(
                 output,
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
-                params.blockPos.mOffset.y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(origin.getBlockPosition())
-                                                                : origin.getBlockPosition(),
+                params.blockPos.mOffset->y != INVALID_POSITION_Y
+                    ? params.blockPos.getBlockPos(origin.getBlockPosition(), Vec3{0})
+                    : origin.getBlockPosition(),
                 Block::tryGetFromRegistry(params.namespaceId.getText()).as_ptr()
             );
         });

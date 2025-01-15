@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mc/deps/core/math/Vec3.h>
+#include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPosition.h>
 
 namespace fh {
@@ -13,7 +15,7 @@ struct InfoCommand {
     struct Params {
         Mode            mode;
         CommandPosition pos{
-            {0, INVALID_POSITION_Y, 0}
+            Vec3{0, INVALID_POSITION_Y, 0}
         };
     };
 

@@ -1,22 +1,21 @@
 #include "CircuitPendingUpdateVisualization.h"
 
 #include <ll/api/memory/Hook.h>
-#include <ll/api/schedule/Scheduler.h>
 #include <ll/api/service/Bedrock.h>
-#include <ll/api/thread/ThreadPool.h>
+#include <ll/api/thread/ThreadPoolExecutor.h>
 #include <mc/world/Facing.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/ChunkPos.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/block/Block.h>
 #include <mc/world/level/chunk/LevelChunk.h>
+#include <mc/world/redstone/circuit/CircuitSceneGraph.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
 #include <mc/world/redstone/circuit/CircuitTrackingInfo.h>
 #include <mc/world/redstone/circuit/components/BaseRailTransporter.h>
 #include <mc/world/redstone/circuit/components/PoweredBlockComponent.h>
 #include <mc/world/redstone/circuit/components/TransporterComponent.h>
 #include <mutex>
-
 
 
 #include "figure_hack/Utils/BlockSelector.h"
@@ -36,7 +35,7 @@ std::atomic<bool>            isPendingUpdatesHooking_flag = false;
 bool                         needDrawBox_flag             = false;
 std::atomic<std::thread::id> id{};
 
-ll::thread::ThreadPool threadPool{1};
+ll::thread::ThreadPoolExecutor threadPool{"Redstone Thread", 1};
 
 ll::chrono::GameTickClock::time_point lastTime;
 std::condition_variable               cv;
@@ -83,180 +82,180 @@ void CPUVisualize::clearPos() {
 
 namespace {
 
-LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
-    ProcessPendingUpdates_Hook,
-    ll::memory::HookPriority::Normal,
-    CircuitSceneGraph,
-    &CircuitSceneGraph::processPendingUpdates,
-    void,
-    BlockSource* region
-) {
-    if (figureHack::getInstance().getConfig().function.enable_microtick) {
-        if (!this->mPendingUpdates.empty() && start) {
-            isPendingUpdatesHooking_flag = true;
-            threadPool.addTask([this, region]() {
-                id = std::this_thread::get_id();
-                this->origin(region);
-                isPendingUpdatesHooking_flag = false;
-                start                        = !posToDebug.empty();
-            });
-            return;
-        } else {
-            isPendingUpdatesHooking_flag = false;
-        }
-    }
-    this->origin(region);
-}
+// LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
+//     ProcessPendingUpdates_Hook,
+//     ll::memory::HookPriority::Normal,
+//     CircuitSceneGraph,
+//     &CircuitSceneGraph::update,
+//     void,
+//     BlockSource* region
+// ) {
+//     if (figureHack::getInstance().getConfig().function.enable_microtick) {
+//         if (!this->mPendingUpdates.empty() && start) {
+//             isPendingUpdatesHooking_flag = true;
+//             threadPool.execute([this, region]() {
+//                 id = std::this_thread::get_id();
+//                 this->origin(region);
+//                 isPendingUpdatesHooking_flag = false;
+//                 start                        = !posToDebug.empty();
+//             });
+//             return;
+//         } else {
+//             isPendingUpdatesHooking_flag = false;
+//         }
+//     }
+//     this->origin(region);
+// }
 
 
-DimensionType nowtype{};
+// DimensionType nowtype{};
 
-LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
-    FindRelationships_Hook,
-    ll::memory::HookPriority::Normal,
-    CircuitSceneGraph,
-    &CircuitSceneGraph::findRelationships,
-    void,
-    const BlockPos&       pos,
-    BaseCircuitComponent* producerTarget,
-    BlockSource*          region
-) {
-    using namespace std::chrono_literals;
-    if (isPendingUpdatesHooking_flag && id == std::this_thread::get_id()) {
-        nowtype = region->getDimensionId();
-        if (CPUVisualize::tryRemovePos(nowtype, pos)) {
-            needDrawBox_flag = true;
-            lastTime         = ll::chrono::GameTickClock::now();
-            this->origin(pos, producerTarget, region);
-        } else {
-            needDrawBox_flag = false;
-            this->origin(pos, producerTarget, region);
-        }
-        return;
-    } else {
-        this->origin(pos, producerTarget, region);
-    }
-}
+// LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
+//     FindRelationships_Hook,
+//     ll::memory::HookPriority::Normal,
+//     CircuitSceneGraph,
+//     &CircuitSceneGraph::findRelationships,
+//     void,
+//     const BlockPos&       pos,
+//     BaseCircuitComponent* producerTarget,
+//     BlockSource*          region
+// ) {
+//     using namespace std::chrono_literals;
+//     if (isPendingUpdatesHooking_flag && id == std::this_thread::get_id()) {
+//         nowtype = region->getDimensionId();
+//         if (CPUVisualize::tryRemovePos(nowtype, pos)) {
+//             needDrawBox_flag = true;
+//             lastTime         = ll::chrono::GameTickClock::now();
+//             this->origin(pos, producerTarget, region);
+//         } else {
+//             needDrawBox_flag = false;
+//             this->origin(pos, producerTarget, region);
+//         }
+//         return;
+//     } else {
+//         this->origin(pos, producerTarget, region);
+//     }
+// }
 
-void setCircuitTrackingInfo(
-    CircuitTrackingInfo::Entry& old,
-    BaseCircuitComponent*       component,
-    const BlockPos&             pos,
-    const schar&                direction,
-    const CircuitComponentType  typeID
-) {
-    old.mComponent = component;
-    old.mPos       = pos;
-    old.mDirection = static_cast<FacingID>(direction);
-    old.mTypeID    = typeID;
-}
+// void setCircuitTrackingInfo(
+//     CircuitTrackingInfo::Entry& old,
+//     BaseCircuitComponent*       component,
+//     const BlockPos&             pos,
+//     const uchar&                direction,
+//     const CircuitComponentType  typeID
+// ) {
+//     old.mComponent = component;
+//     old.mPos       = pos;
+//     old.mDirection = direction;
+//     old.mTypeID    = typeID;
+// }
 
-int addToFillQueue(
-    ::CircuitSceneGraph&               graph,
-    ::CircuitComponentList&            powerAssociationMap,
-    ::BaseCircuitComponent*            newComponent,
-    ::CircuitTrackingInfo&             info,
-    const BlockPos&                    newPos,
-    schar                              face,
-    std::queue<::CircuitTrackingInfo>& queue
-) {
-    if (!newComponent) return -1;
-    ::CircuitTrackingInfo newInfo = info;
-    CircuitComponentType  type    = newComponent->getCircuitComponentGroupType();
-    size_t                oldSize = newComponent->mSources.mComponents.size();
-    setCircuitTrackingInfo(newInfo.mCurrent, newComponent, newPos, face, type);
-    int  newDampening     = info.mDampening;
-    bool bDirectlyPowered = info.mDirectlyPowered;
-    powerAssociationMap.mComponents.emplace_back(newComponent, 0, newPos);
-    if (info.mNearest.mComponent->allowConnection(graph, newInfo, bDirectlyPowered)) {
-        if (newComponent->addSource(graph, newInfo, newDampening, bDirectlyPowered)) {
-            newInfo.m2ndNearest = info.mNearest;
-            setCircuitTrackingInfo(newInfo.mNearest, newComponent, newPos, face, newInfo.mCurrent.mTypeID);
-            newInfo.mDampening       = newDampening;
-            newInfo.mDirectlyPowered = bDirectlyPowered;
-            queue.push(newInfo);
-            return true;
-        } else if (oldSize != newComponent->mSources.mComponents.size()) {
-            return true;
-        }
-    }
-    return false;
-}
+// int addToFillQueue(
+//     ::CircuitSceneGraph&               graph,
+//     ::CircuitComponentList&            powerAssociationMap,
+//     ::BaseCircuitComponent*            newComponent,
+//     ::CircuitTrackingInfo&             info,
+//     const BlockPos&                    newPos,
+//     schar                              face,
+//     std::queue<::CircuitTrackingInfo>& queue
+// ) {
+//     if (!newComponent) return -1;
+//     ::CircuitTrackingInfo newInfo = info;
+//     CircuitComponentType  type    = newComponent->getCircuitComponentGroupType();
+//     size_t                oldSize = newComponent->mSources->mComponents.size();
+//     setCircuitTrackingInfo(newInfo.mCurrent, newComponent, newPos, face, type);
+//     int  newDampening     = info.mDampening;
+//     bool bDirectlyPowered = info.mDirectlyPowered;
+//     powerAssociationMap.mComponents.emplace_back(newComponent, 0, newPos);
+//     if (info.mNearest->mComponent->allowConnection(graph, newInfo, bDirectlyPowered)) {
+//         if (newComponent->addSource(graph, newInfo, newDampening, bDirectlyPowered)) {
+//             newInfo.m2ndNearest = info.mNearest;
+//             setCircuitTrackingInfo(newInfo.mNearest, newComponent, newPos, face, newInfo.mCurrent->mTypeID);
+//             newInfo.mDampening       = newDampening;
+//             newInfo.mDirectlyPowered = bDirectlyPowered;
+//             queue.push(newInfo);
+//             return true;
+//         } else if (oldSize != newComponent->mSources->mComponents.size()) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
-int SPEED = 2;
-int now   = 0;
+// int SPEED = 2;
+// int now   = 0;
 
-LL_AUTO_STATIC_HOOK( // NOLINT
-    addToFillQueue_Hook,
-    ll::memory::HookPriority::Normal,
-    "addToFillQueue",
-    void,
-    ::CircuitSceneGraph&               graph,
-    ::CircuitComponentList&            powerAssociationMap,
-    ::BaseCircuitComponent*            newComponent,
-    ::CircuitTrackingInfo&             info,
-    const ::BlockPos&                  newPos,
-    schar                              face,
-    std::queue<::CircuitTrackingInfo>& queue
-) {
-    using namespace std::chrono_literals;
-    if (isPendingUpdatesHooking_flag && needDrawBox_flag && id == std::this_thread::get_id()) {
-        BSelector::add(nowtype, info.mNearest.mPos, {.color = BSelector::Color::silver, .lifespan = SPEED});
-        int res = addToFillQueue(graph, powerAssociationMap, newComponent, info, newPos, face, queue);
-        switch (res) {
-        case 0:
-            BSelector::add(nowtype, newPos, {.color = BSelector::Color::red, .lifespan = SPEED});
-            break;
-        case 1:
-            BSelector::add(nowtype, newPos, {.color = BSelector::Color::lime, .lifespan = SPEED});
-            break;
-        case -1:
-        default:
-            BSelector::add(nowtype, newPos, {.color = BSelector::Color::yellow, .lifespan = SPEED});
-            break;
-        }
-        std::unique_lock lock(mutex_cv);
-        cv.wait(lock);
-    } else {
-        origin(graph, powerAssociationMap, newComponent, info, newPos, face, queue);
-    }
-}
+// LL_AUTO_STATIC_HOOK( // NOLINT
+//     addToFillQueue_Hook,
+//     ll::memory::HookPriority::Normal,
+//     "addToFillQueue",
+//     void,
+//     ::CircuitSceneGraph&               graph,
+//     ::CircuitComponentList&            powerAssociationMap,
+//     ::BaseCircuitComponent*            newComponent,
+//     ::CircuitTrackingInfo&             info,
+//     const ::BlockPos&                  newPos,
+//     schar                              face,
+//     std::queue<::CircuitTrackingInfo>& queue
+// ) {
+//     using namespace std::chrono_literals;
+//     if (isPendingUpdatesHooking_flag && needDrawBox_flag && id == std::this_thread::get_id()) {
+//         BSelector::add(nowtype, info.mNearest->mPos, {.color = BSelector::Color::silver, .lifespan = SPEED});
+//         int res = addToFillQueue(graph, powerAssociationMap, newComponent, info, newPos, face, queue);
+//         switch (res) {
+//         case 0:
+//             BSelector::add(nowtype, newPos, {.color = BSelector::Color::red, .lifespan = SPEED});
+//             break;
+//         case 1:
+//             BSelector::add(nowtype, newPos, {.color = BSelector::Color::lime, .lifespan = SPEED});
+//             break;
+//         case -1:
+//         default:
+//             BSelector::add(nowtype, newPos, {.color = BSelector::Color::yellow, .lifespan = SPEED});
+//             break;
+//         }
+//         std::unique_lock lock(mutex_cv);
+//         cv.wait(lock);
+//     } else {
+//         origin(graph, powerAssociationMap, newComponent, info, newPos, face, queue);
+//     }
+// }
 
-LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
-    Evaluate_Hook,
-    ll::memory::HookPriority::Normal,
-    CircuitSystem,
-    &CircuitSystem::evaluate,
-    void,
-    BlockSource* region
-) {
-    if (isPendingUpdatesHooking_flag) {
-        return;
-    } else {
-        this->origin(region);
-    }
-}
+// LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
+//     Evaluate_Hook,
+//     ll::memory::HookPriority::Normal,
+//     CircuitSystem,
+//     &CircuitSystem::evaluate,
+//     void,
+//     BlockSource* region
+// ) {
+//     if (isPendingUpdatesHooking_flag) {
+//         return;
+//     } else {
+//         this->origin(region);
+//     }
+// }
 
 
-LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
-    UpdateDependencies_Hook,
-    ll::memory::HookPriority::Normal,
-    CircuitSystem,
-    &CircuitSystem::updateDependencies,
-    void,
-    BlockSource* region
-) {
-    if (isPendingUpdatesHooking_flag) {
-        if (now % SPEED == 0) {
-            cv.notify_all();
-        }
-        now++;
-        return;
-    } else {
-        now = 0;
-        this->origin(region);
-    }
-}
+// LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
+//     UpdateDependencies_Hook,
+//     ll::memory::HookPriority::Normal,
+//     CircuitSystem,
+//     &CircuitSystem::updateDependencies,
+//     void,
+//     BlockSource* region
+// ) {
+//     if (isPendingUpdatesHooking_flag) {
+//         if (now % SPEED == 0) {
+//             cv.notify_all();
+//         }
+//         now++;
+//         return;
+//     } else {
+//         now = 0;
+//         this->origin(region);
+//     }
+// }
 
 
 // 以下函数以及上面的addToFillQueue为电路搜索算法的完整复原，以应对addToFillQueue被完全内联的情况
