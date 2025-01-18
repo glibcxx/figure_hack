@@ -43,10 +43,6 @@ void BlockItemCommand::init() {
                 output.error("invalid executor");
                 return;
             }
-            // if (params.blockId == 0) {
-            //     BlockItemCommand::_addAirItem(output, entity);
-            //     return;
-            // }
             auto block = Block::tryGetFromRegistry(params.blockId, 0);
             BlockItemCommand::_additem(output, entity, block.as_ptr());
         }
@@ -77,18 +73,5 @@ void BlockItemCommand::_additem(CommandOutput& output, Actor* entity, const Bloc
     player.refreshInventory();
     output.success("add item success");
 }
-
-// void BlockItemCommand::_addAirItem(CommandOutput& output, Actor* entity) {
-//     Player&      player = *static_cast<Player*>(entity);
-//     ItemStack    itemstack{"glass"};
-//     const Block* airBlock = Block::tryGetFromRegistry("air");
-//     itemstack.mBlock      = airBlock;
-//     auto& mLegacyBlock    = ll::memory::dAccess<WeakPtr<BlockLegacy>>(itemstack.mItem.get(), 456);
-//     mLegacyBlock          = airBlock->getLegacyBlock().createWeakPtr();
-//     player.add(itemstack);
-//     player.refreshInventory();
-//     output.success("add item success");
-// }
-
 
 } // namespace fh

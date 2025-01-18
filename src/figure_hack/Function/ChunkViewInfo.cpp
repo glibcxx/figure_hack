@@ -1,9 +1,5 @@
 #include "ChunkViewInfo.h"
 
-#include <memory>
-#include <mutex>
-#include <span>
-
 #include <ll/api/memory/Hook.h>
 #include <ll/api/service/Bedrock.h>
 
@@ -14,7 +10,6 @@
 #include <mc/world/level/chunk/ChunkSource.h>
 #include <mc/world/level/chunk/ChunkViewSource.h>
 #include <mc/world/level/dimension/Dimension.h>
-#include <unordered_map>
 
 namespace {
 

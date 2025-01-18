@@ -1,8 +1,8 @@
 #include "Info.h"
-#include "mc/server/commands/Command.h"
 
 #include <ll/api/i18n/I18n.h>
 #include <mc/deps/core/math/Vec2.h>
+#include <mc/server/commands/Command.h>
 #include <mc/server/commands/CommandUtils.h>
 #include <mc/world/actor/Actor.h>
 #include <mc/world/actor/ActorDefinitionIdentifier.h>
@@ -53,20 +53,13 @@ std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, cons
     Actor* retActor = nullptr;
     for (auto&& actor : actors) {
         const AABB& actorBB = actor->getAABB();
-        if ((actorBB.contains(from) || (actorBB.clip(from, to).mUnk8b4661.as<bool>())) // from -> to 与 actorBB 有交点
+        if ((actorBB.contains(from) || (actorBB.clip(from, to).mUnk8b4661.as<bool>())
+            ) // from -> to 与 actorBB 有交点, 我也不知道mUnk8b4661是什么，但试了一遍好像能跑
             && (!retActor || from.distanceToSqr(actor->getPosition()) < from.distanceToSqr(retActor->getPosition())
             )) { // 只取最近的一个
             retActor = actor;
         }
     }
-    // ActorUniqueID             uniqueid;
-    // ActorDefinitionIdentifier id;
-    // id.initialize("fh:test");
-    // Actor* highligher = CommandUtils::spawnEntityAt(region, from, id, uniqueid, nullptr);
-    // if (highligher) {
-    //     highligher->setVariant(3);
-    // }
-
 
     return retActor ? std::optional<ActorInfo>{
                           {

@@ -20,7 +20,6 @@
 #include <mc/world/phys/AABB.h>
 #include <mc/world/phys/HitResult.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
-#include <queue>
 
 #include "figure_hack/Function/Info.h"
 #include "figure_hack/Utils/BlockHighlight.h"

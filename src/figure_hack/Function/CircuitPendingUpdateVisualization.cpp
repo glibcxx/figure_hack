@@ -1,6 +1,5 @@
 #include "CircuitPendingUpdateVisualization.h"
 
-#include <cstdint>
 #include <ll/api/memory/Hook.h>
 #include <ll/api/service/Bedrock.h>
 #include <ll/api/thread/ThreadPoolExecutor.h>
@@ -16,7 +15,6 @@
 #include <mc/world/redstone/circuit/components/BaseRailTransporter.h>
 #include <mc/world/redstone/circuit/components/PoweredBlockComponent.h>
 #include <mc/world/redstone/circuit/components/TransporterComponent.h>
-#include <mutex>
 
 
 #include "figure_hack/Utils/BlockHighlight.h"

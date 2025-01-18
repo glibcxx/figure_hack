@@ -115,7 +115,6 @@ void MagicStick::enable() {
                 player.sendMessage("item.magic_stick.changed_to"_tr(MagicStick::mode_name[level - 1]));
                 player.refreshInventory();
                 CPUVisualize::clearPos(player.getLevel());
-                // BlockHighlightManager::clear();
             }
             lastChangeModeTime = now;
         });
