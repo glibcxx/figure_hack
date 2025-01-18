@@ -4,7 +4,7 @@
 
 ## 安装
 
-本插件基于 bds 1.21.3.01 开发，不保证兼容以前的版本
+本插件现基于 bds 1.21.50 开发，不保证兼容以前的版本
 
 1. 安装插件：
 
@@ -12,9 +12,11 @@
 lip install github.com/glibcxx/figure_hack
 ```
 
+或，手动下载后解压到`plugins`文件夹
+
 2. 安装行为包和资源包：
 
-从 release 页面下载`assets.mcaddon`，双击安装。
+从 v0.3.1 的 release 页面下载`assets.mcaddon`，双击安装。
 
 然后将`assets.mcaddon`内的 BP 文件夹复制到 bds 的`development_behavior_packs`文件夹内。
 
@@ -23,11 +25,13 @@ lip install github.com/glibcxx/figure_hack
 ```json
 [
     {
-        "pack_id": "495e0ad1-7fe1-40bc-a8b7-00b097a3a392",
+        "pack_id": "53d6b8ca-ec81-4965-adc9-5d8ee6632f72",
         "version": [1, 0, 0]
     }
 ]
 ```
+
+如果你使用的是 v0.3.0 及以前的插件，请改从 v0.1.0 的 release 页面下载`assets.mcaddon`，且上方 pack_id 的值改为`495e0ad1-7fe1-40bc-a8b7-00b097a3a392`。
 
 ## 使用
 
@@ -113,7 +117,16 @@ lip install github.com/glibcxx/figure_hack
 ### 获取任意方块物品
 
 ```
-/blockitem 方块命名空间id/方块数字Id
+/blockitem 方块id/方块数字Id
+/blockitem full 完整命名空间id
 ```
 
 执行后会强行给予玩家方块对应的物品。命名空间 id 可以为原版指令方块列表中不包含的 id，比如`moving_block`
+
+### 查询 ChunkSource
+
+```
+/chunksourceinfo
+```
+
+列出游戏内所有 ChunkSource。
