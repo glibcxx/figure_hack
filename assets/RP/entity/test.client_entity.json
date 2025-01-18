@@ -1,0 +1,29 @@
+{
+    "format_version": "1.10.0",
+    "minecraft:client_entity": {
+        "description": {
+            "identifier": "fh:block_highlight",
+            "materials": { "default": "entity_alphablend" },
+            "geometry": { "default": "geometry.block_highlight" },
+            "render_controllers": ["controller.render.block_highlight"],
+            "textures": {
+                "transparent": "textures/entity/transparent",
+                "black": "textures/entity/black",
+                "blue": "textures/entity/blue",
+                "brown": "textures/entity/brown",
+                "cyan": "textures/entity/cyan",
+                "gray": "textures/entity/gray",
+                "green": "textures/entity/green",
+                "light_blue": "textures/entity/light_blue",
+                "lime": "textures/entity/lime",
+                "magenta": "textures/entity/magenta",
+                "pink": "textures/entity/pink",
+                "purple": "textures/entity/purple",
+                "red": "textures/entity/red",
+                "silver": "textures/entity/silver",
+                "white": "textures/entity/white",
+                "yellow": "textures/entity/yellow"
+            }
+        }
+    }
+}

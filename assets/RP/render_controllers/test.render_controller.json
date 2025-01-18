@@ -1,0 +1,32 @@
+{
+    "format_version": "1.8.0",
+    "render_controllers": {
+        "controller.render.block_highlight": {
+            "arrays": {
+                "textures": {
+                    "Array.variants": [
+                        "Texture.transparent",
+                        "Texture.black",
+                        "Texture.blue",
+                        "Texture.brown",
+                        "Texture.cyan",
+                        "Texture.gray",
+                        "Texture.green",
+                        "Texture.light_blue",
+                        "Texture.lime",
+                        "Texture.magenta",
+                        "Texture.pink",
+                        "Texture.purple",
+                        "Texture.red",
+                        "Texture.silver",
+                        "Texture.white",
+                        "Texture.yellow"
+                    ]
+                }
+            },
+            "geometry": "Geometry.default",
+            "materials": [{ "*": "Material.default" }],
+            "textures": ["Array.variants[query.variant]"]
+        }
+    }
+}

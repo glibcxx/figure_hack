@@ -15,9 +15,11 @@
 #include <mc/world/level/Level.h>
 #include <mc/world/level/chunk/LevelChunk.h>
 
-#include "figure_hack/Utils/BlockSelector.h"
+#include "figure_hack/Utils/BlockHighlight.h"
 
 namespace fh {
+
+using namespace ll::i18n_literals;
 
 struct Params {
     int display_time;
@@ -60,49 +62,48 @@ void QueryPendingTickCommand::getPtInfoAtChunkPos(
     CommandOutput&  output,
     int             displayTime
 ) {
-    BlockTickingQueue&             pt            = region.getChunk(chunkPos)->getTickQueue();
-    auto                           nextTickQueue = pt.mNextTickQueue;
-    BlockTickingQueue::TickDataSet copiedQueue   = nextTickQueue;
-    if (!copiedQueue.empty()) {
-        BlockTickingQueue::TickDataSet activeQueue;
+    BlockTickingQueue&             pt                  = region.getChunk(chunkPos)->getTickQueue();
+    BlockTickingQueue::TickDataSet copiedNextTickQueue = *pt.mNextTickQueue;
+    BlockTickingQueue::TickDataSet activeTickQueue;
+    if (!copiedNextTickQueue.empty()) {
         output.success(
             "[{}] chunk {} has {} pendingTicks ->",
             region.getLevel().getCurrentTick().tickID,
             chunkPos.toString(),
-            copiedQueue.size()
+            copiedNextTickQueue.size()
         );
-        for (; !copiedQueue.empty();) {
-            auto& blockTick = copiedQueue.top();
+        for (; !copiedNextTickQueue.empty();) {
+            auto& blockTick = copiedNextTickQueue.top();
             if (blockTick.mIsRemoved) {
                 output.success("  {}: removed", blockTick.mData.pos->toString());
-                BSelector::add(
-                    region.getDimensionId(),
+                BlockHighlightManager::add(
+                    region,
                     blockTick.mData.pos,
-                    {.color = BSelector::Color::red, .lifespan = displayTime}
+                    {.color = BlockHighlightManager::Color::red, .lifespan = (uint32_t)displayTime}
                 );
             } else {
-                nextTickQueue->mC.emplace_back(blockTick);
+                activeTickQueue.mC.emplace_back(blockTick);
             }
-            (void)copiedQueue.pop();
+            (void)copiedNextTickQueue.pop();
         }
-        copiedQueue  = std::move(nextTickQueue);
         uint64_t now = region.getLevel().getCurrentTick().tickID;
-        for (; !copiedQueue.empty();) {
-            auto& blockTick = copiedQueue.top();
+        for (; !activeTickQueue.empty();) {
+            auto& blockTick = activeTickQueue.top();
             output.success(
                 "  {}: tick time {}, priority {}, {}",
                 blockTick.mData.pos->toString(),
                 blockTick.mData.tick->tickID,
                 blockTick.mData.priorityOffset,
-                blockTick.mData.mBlock->buildDescriptionName()
+                "{}"_tr(blockTick.mData.mBlock->buildDescriptionName())
             );
-            BSelector::add(
-                region.getDimensionId(),
+            BlockHighlightManager::add(
+                region,
                 blockTick.mData.pos,
-                {.color    = blockTick.mData.tick->tickID <= now ? BSelector::Color::green : BSelector::Color::yellow,
-                 .lifespan = displayTime}
+                {.color    = blockTick.mData.tick->tickID <= now ? BlockHighlightManager::Color::green
+                                                                 : BlockHighlightManager::Color::yellow,
+                 .lifespan = (uint32_t)displayTime}
             );
-            (void)copiedQueue.pop();
+            (void)activeTickQueue.pop();
         }
     } else {
         output.error("no pendingTick");

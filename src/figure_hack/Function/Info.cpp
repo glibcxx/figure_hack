@@ -1,6 +1,15 @@
 #include "Info.h"
-#include "mc/world/actor/Actor.h"
+#include "mc/server/commands/Command.h"
+
+#include <ll/api/i18n/I18n.h>
+#include <mc/deps/core/math/Vec2.h>
+#include <mc/server/commands/CommandUtils.h>
+#include <mc/world/actor/Actor.h>
+#include <mc/world/actor/ActorDefinitionIdentifier.h>
+#include <mc/world/actor/ActorFactory.h>
+#include <mc/world/actor/ActorFactoryData.h>
 #include <mc/world/actor/player/Player.h>
+#include <mc/world/level/Level.h>
 #include <mc/world/level/block/Block.h>
 #include <mc/world/level/dimension/Dimension.h>
 #include <mc/world/phys/AABB.h>
@@ -11,8 +20,9 @@
 
 namespace fh {
 BlockInfo blockInfoAtPos(BlockSource& region, const BlockPos& pos) {
+    using namespace ll::i18n_literals;
     const Block& block = region.getBlock(pos);
-    return {block.buildDescriptionName()};
+    return {"{}"_tr(block.buildDescriptionName())};
 }
 
 std::optional<CircuitInfo> circuitInfoAtPos(BlockSource& region, const BlockPos& pos) {
@@ -49,6 +59,14 @@ std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, cons
             retActor = actor;
         }
     }
+    // ActorUniqueID             uniqueid;
+    // ActorDefinitionIdentifier id;
+    // id.initialize("fh:test");
+    // Actor* highligher = CommandUtils::spawnEntityAt(region, from, id, uniqueid, nullptr);
+    // if (highligher) {
+    //     highligher->setVariant(3);
+    // }
+
 
     return retActor ? std::optional<ActorInfo>{
                           {

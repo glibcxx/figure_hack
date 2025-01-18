@@ -20,7 +20,7 @@
 #include <mc/world/phys/HitResult.h>
 
 #include "CircuitPendingUpdateVisualization.h"
-#include "figure_hack/Utils/BlockSelector.h"
+#include "figure_hack/Utils/BlockHighlight.h"
 #include "figure_hack/Utils/Utils.h"
 #include "figure_hack/figure_hack.h"
 
@@ -78,7 +78,7 @@ void MagicStick::enable() {
                             player.sendMessage(fmt::format(
                                 "{}: {}",
                                 pos.toString(),
-                                CPUVisualize::switchPos(player.getDimensionId(), pos)
+                                CPUVisualize::switchPos(player.getDimensionBlockSource(), pos)
                             ));
                         } else {
                             player.sendMessage("microtick not enabled");
@@ -114,8 +114,8 @@ void MagicStick::enable() {
                 );
                 player.sendMessage("item.magic_stick.changed_to"_tr(MagicStick::mode_name[level - 1]));
                 player.refreshInventory();
-                CPUVisualize::clearPos();
-                BSelector::clear();
+                CPUVisualize::clearPos(player.getLevel());
+                // BlockHighlightManager::clear();
             }
             lastChangeModeTime = now;
         });

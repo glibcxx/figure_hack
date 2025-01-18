@@ -1,9 +1,9 @@
 {
     "format_version": 2,
     "header": {
-        "name": "[RP]block_selector",
+        "name": "[RP]Highlight Blocks",
         "description": "this resource pack is a part of Figure Hack mod",
-        "uuid": "066c8d2b-dc07-4b43-a57d-29277d939da2",
+        "uuid": "90d72250-ecfe-45c2-92c6-32b8d1d0c598",
         "version": [1, 0, 0],
         "min_engine_version": [1, 20, 0]
     },
@@ -11,13 +11,13 @@
         {
             "description": "Resource Pack",
             "type": "resources",
-            "uuid": "546367c7-8a1d-44d8-b469-84a7b6b2a777",
+            "uuid": "e9fba4aa-5dee-410d-8379-490e0d2319f2",
             "version": [1, 0, 0]
         }
     ],
     "dependencies": [
         {
-            "uuid": "495e0ad1-7fe1-40bc-a8b7-00b097a3a392",
+            "uuid": "53d6b8ca-ec81-4965-adc9-5d8ee6632f72",
             "version": [1, 0, 0]
         }
     ],

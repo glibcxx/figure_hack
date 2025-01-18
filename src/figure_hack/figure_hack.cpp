@@ -9,7 +9,7 @@
 
 #include "Commands/Commands.h"
 #include "Function/MagicStick.h"
-#include "Utils/BlockSelector.h"
+#include "Utils/BlockHighlight.h"
 
 namespace fh {
 
@@ -40,7 +40,7 @@ bool figureHack::enable() {
     logger.debug("Enabling...");
 
     Commands::initAll();
-    BSelector::init();
+    BlockHighlightManager::init();
     MagicStick::enable();
 
     return true;
@@ -50,7 +50,6 @@ bool figureHack::disable() {
     const ll::io::Logger& logger = this->getSelf().getLogger();
     logger.debug("Disabling...");
 
-    BSelector::clear(true);
     MagicStick::disable();
     ll::config::saveConfig(mConfig, getSelf().getConfigDir() / "config.json");
     return true;

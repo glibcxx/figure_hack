@@ -1,0 +1,42 @@
+{
+    "format_version": "1.20.0",
+    "minecraft:entity": {
+        "description": {
+            "identifier": "fh:block_highlight",
+            "runtime_identifier": "minecraft:arrow",
+            "is_experimental": false,
+            "is_spawnable": false,
+            "is_summonable": true
+        },
+        "components": {
+            "minecraft:physics": { "has_gravity": false, "has_collision": false },
+            "minecraft:health": { "value": 2000, "max": 2000 },
+            "minecraft:type_family": { "family": ["inanimate", "block_highlight"] },
+            "minecraft:collision_box": { "height": 16, "width": 0 },
+            "minecraft:knockback_resistance": { "value": 1 },
+            "minecraft:nameable": { "always_show": true },
+            "minecraft:custom_hit_test": {
+                "hitboxes": [
+                    {
+                        "pivot": [0, 100, 0],
+                        "width": 0,
+                        "height": 0
+                    }
+                ]
+            },
+            "minecraft:damage_sensor": {
+                "triggers": {
+                    "deals_damage": false
+                }
+            },
+            "minecraft:pushable": {
+                "is_pushable": false,
+                "is_pushable_by_piston": false
+            },
+            "minecraft:scale": { "value": 1.001 },
+            "minecraft:variant": {
+                "value": 0
+            }
+        }
+    }
+}

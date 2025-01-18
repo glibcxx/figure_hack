@@ -23,7 +23,7 @@
 #include <queue>
 
 #include "figure_hack/Function/Info.h"
-#include "figure_hack/Utils/BlockSelector.h"
+#include "figure_hack/Utils/BlockHighlight.h"
 #include "figure_hack/Utils/Utils.h"
 
 namespace fh {
@@ -69,7 +69,7 @@ void InfoCommand::_excute(const CommandOrigin& origin, CommandOutput& output, Mo
         return;
     }
     BlockSource& region = entity->getDimensionBlockSource();
-    BSelector::add(region.getDimensionId(), pos, {.color = BSelector::Color::pink});
+    BlockHighlightManager::add(region, pos, {.color = BlockHighlightManager::Color::pink});
     switch (mode) {
     case Mode::actor: {
         auto data =
@@ -123,7 +123,7 @@ void InfoCommand::_excute(const CommandOrigin& origin, CommandOutput& output, Mo
             output.success("command.info.sources_of"_tr(pos.toString()));
             size_t num = 1;
             for (auto&& source : data->sources.mComponents) {
-                BSelector::add(entity->getDimensionId(), source.mPos, {.color = BSelector::Color::white});
+                BlockHighlightManager::add(region, source.mPos, {.color = BlockHighlightManager::Color::white});
                 output.success("command.info.source_info"_tr(
                     num,
                     utils::typeId2Name(source.mComponent->getCircuitComponentType()),
