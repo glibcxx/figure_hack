@@ -17,6 +17,7 @@
 #include <mc/world/redstone/circuit/CircuitSceneGraph.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
 
+#include "figure_hack/Utils/TextMarker.h"
 
 namespace fh {
 BlockInfo blockInfoAtPos(BlockSource& region, const BlockPos& pos) {
@@ -60,6 +61,8 @@ std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, cons
             retActor = actor;
         }
     }
+
+    // TextMarker::addText(region, fmt::format("{}", retActor->getPosition().toString()), retActor->getPosition());
 
     return retActor ? std::optional<ActorInfo>{
                           {

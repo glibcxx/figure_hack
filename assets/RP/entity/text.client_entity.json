@@ -1,0 +1,11 @@
+{
+    "format_version": "1.10.0",
+    "minecraft:client_entity": {
+        "description": {
+            "identifier": "fh:text_marker",
+            "materials": { "default": "entity_alphatest" },
+            "render_controllers": ["controller.render.default"],
+            "geometry": { "default": "geometry.default" }
+        }
+    }
+}

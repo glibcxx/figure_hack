@@ -4,7 +4,7 @@
         "name": "[BP]Highlight Blocks",
         "description": "this behaviour pack is a part of Figure Hack mod",
         "uuid": "53d6b8ca-ec81-4965-adc9-5d8ee6632f72",
-        "version": [1, 0, 0],
+        "version": [1, 0, 1],
         "min_engine_version": [1, 20, 0]
     },
     "modules": [
@@ -12,13 +12,13 @@
             "description": "Behavior Pack",
             "type": "data",
             "uuid": "143d7972-e5c7-45be-9f0a-6e426837ab8a",
-            "version": [1, 0, 0]
+            "version": [1, 0, 1]
         }
     ],
     "dependencies": [
         {
             "uuid": "90d72250-ecfe-45c2-92c6-32b8d1d0c598",
-            "version": [1, 0, 0]
+            "version": [1, 0, 1]
         }
     ],
     "metadata": {
