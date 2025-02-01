@@ -68,37 +68,19 @@ void InfoCommand::_excute(const CommandOrigin& origin, CommandOutput& output, Mo
         return;
     }
     BlockSource& region = entity->getDimensionBlockSource();
-    BlockHighlightManager::add(region, pos, {.color = BlockHighlightManager::Color::pink});
     switch (mode) {
     case Mode::actor: {
-        auto data =
-            fh::actorInfo(entity, region, entity->getEyePos(), entity->getEyePos() + entity->getViewVector() * 5.2f);
-        if (data) {
-            output.success(
-                "[{}] {} id {} ---\n  pos ({:.16f}, {:.16f}, {:.16f}),\n  vel |({:.16f}, {:.16f}, {:.16f})| =  "
-                "{:.16f}",
-                origin.getLevel()->getCurrentTick().tickID,
-                data->typeId,
-                data->runtimeId.rawID,
-                data->pos.x,
-                data->pos.y,
-                data->pos.z,
-                data->velocity.x,
-                data->velocity.y,
-                data->velocity.z,
-                data->velocity.length()
-            );
-        } else {
-            output.error("command.info.error.no_actor_found"_tr());
-        }
+        output.success("ActorInfo: {}", fh::toggleActorInfo(region) ? "On" : "Off");
         break;
     }
     case Mode::basic: {
+        BlockHighlightManager::add(region, pos, {.color = BlockHighlightManager::Color::pink});
         auto data = fh::blockInfoAtPos(region, pos);
         output.success("{}: {}", pos.toString(), data.name);
         break;
     }
     case Mode::circuit: {
+        BlockHighlightManager::add(region, pos, {.color = BlockHighlightManager::Color::pink});
         auto data = fh::circuitInfoAtPos(region, pos);
         if (data) {
             output.success("command.info.rs_comp_info"_tr(
@@ -114,6 +96,7 @@ void InfoCommand::_excute(const CommandOrigin& origin, CommandOutput& output, Mo
         break;
     }
     case Mode::source: {
+        BlockHighlightManager::add(region, pos, {.color = BlockHighlightManager::Color::pink});
         auto data = fh::circuitInfoAtPos(region, pos);
         if (data) {
             if (data->sources.mComponents.empty()) {

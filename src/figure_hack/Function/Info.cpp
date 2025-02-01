@@ -1,9 +1,14 @@
 #include "Info.h"
 
 #include <ll/api/i18n/I18n.h>
+#include <ll/api/memory/Hook.h>
 #include <mc/deps/core/math/Vec2.h>
+#include <mc/deps/ecs/gamerefs_entity/EntityContext.h>
+#include <mc/entity/components/ActorUniqueIDComponent.h>
+#include <mc/network/SpatialActorNetworkData.h>
 #include <mc/server/commands/Command.h>
 #include <mc/server/commands/CommandUtils.h>
+#include <mc/world/Minecraft.h>
 #include <mc/world/actor/Actor.h>
 #include <mc/world/actor/ActorDefinitionIdentifier.h>
 #include <mc/world/actor/ActorFactory.h>
@@ -20,8 +25,10 @@
 #include "figure_hack/Utils/TextMarker.h"
 
 namespace fh {
+
+using namespace ll::i18n_literals;
+
 BlockInfo blockInfoAtPos(BlockSource& region, const BlockPos& pos) {
-    using namespace ll::i18n_literals;
     const Block& block = region.getBlock(pos);
     return {"{}"_tr(block.buildDescriptionName())};
 }
@@ -73,6 +80,118 @@ std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, cons
                            .velocity  = retActor->getPosDelta(),
                            }}
                     : std::nullopt;
+}
+
+std::unordered_map<Actor*, TextMarker::TextHandle> actors{};
+
+void _getActorInfo(Actor& actor) {
+    if (actor.getActorIdentifier().getNamespace() != "fh" && !actor.isPlayer() && !actor.isRemoved()) {
+        const ::Vec3& pos  = actor.getPosition();
+        const AABB&   aabb = actor.getAABB();
+        auto          uniqueIdComp =
+            actor.mEntityContext.get().mEnTTRegistry.try_get<ActorUniqueIDComponent>(actor.mEntityContext.get().mEntity
+            );
+        std::string dbgStr = fmt::format(
+            "{}\n"
+            "UniqueId: {}\n"
+            "RuntimeId: {}\n"
+            "Pos: {}\n"
+            "PosPrev: {}\n"
+            "Vel: {}\n"
+            "Rot: {}\n"
+            "Health: {}\n",
+            actor.getTypeName(),
+            uniqueIdComp ? std::to_string(uniqueIdComp->mUnkf9218a.as<int64_t>()) : "None",
+            actor.getRuntimeID().rawID,
+            pos.toString(),
+            actor.getPosPrev().toString(),
+            actor.getPosDelta().toString(),
+            actor.getRotation(),
+            actor.getHealth()
+        );
+        auto it = actors.find(&actor);
+        if (it == actors.end()) {
+            actors.emplace(
+                &actor,
+                TextMarker::addText(actor.getDimensionBlockSource(), dbgStr, Vec3{pos.x, aabb.max.y, pos.z})
+            );
+        } else {
+            it->second.change(dbgStr, Vec3{pos.x, aabb.max.y, pos.z});
+        }
+    }
+}
+
+LL_TYPE_INSTANCE_HOOK(
+    ActorTickDebug_hook,
+    ll::memory::HookPriority::Normal,
+    SpatialActorNetworkData,
+    &SpatialActorNetworkData::sendUpdate,
+    void,
+    bool forceTeleport,
+    bool forceMoveLocalEntity,
+    bool forceAbsoluteMovement
+) {
+    this->origin(forceTeleport, forceMoveLocalEntity, forceAbsoluteMovement);
+    Actor& actor = this->mUnk3d576d.as<Actor&>();
+    _getActorInfo(actor);
+}
+
+LL_TYPE_INSTANCE_HOOK(
+    ActorTickDebug2_hook,
+    ll::memory::HookPriority::Normal,
+    Actor,
+    &Actor::tick,
+    bool,
+    ::BlockSource& region
+) {
+    bool res = this->origin(region);
+    _getActorInfo(*this);
+    return res;
+}
+
+LL_TYPE_INSTANCE_HOOK(ActorTickDebug_ActorLoaded_hook, ll::memory::HookPriority::Normal, Actor, &Actor::reload, void) {
+    this->origin();
+    _getActorInfo(*this);
+}
+
+LL_TYPE_INSTANCE_HOOK(
+    ActorTickDebug_ActorRemoved_hook,
+    ll::memory::HookPriority::Normal,
+    Actor,
+    &Actor::$remove,
+    void
+) {
+    actors.erase(this);
+    this->origin();
+}
+
+LL_TYPE_INSTANCE_HOOK(ActorTickDebug3_hook, ll::memory::HookPriority::Normal, Minecraft, &Minecraft::update, bool) {
+    if (this->getSimPaused()) {
+        for (auto&& e : this->getLevel()->getRuntimeActorList()) {
+            _getActorInfo(*e);
+        }
+    }
+    return this->origin();
+}
+
+bool toggleActorInfo(BlockSource& region) {
+    static bool isOn = false;
+    isOn             = !isOn;
+    if (isOn) {
+        ll::memory::HookRegistrar<ActorTickDebug_ActorLoaded_hook>::hook();
+        ll::memory::HookRegistrar<ActorTickDebug_hook>::hook();
+        ll::memory::HookRegistrar<ActorTickDebug2_hook>::hook();
+        ll::memory::HookRegistrar<ActorTickDebug3_hook>::hook();
+        ll::memory::HookRegistrar<ActorTickDebug_ActorRemoved_hook>::hook();
+    } else {
+        ll::memory::HookRegistrar<ActorTickDebug_ActorLoaded_hook>::unhook();
+        ll::memory::HookRegistrar<ActorTickDebug_hook>::unhook();
+        ll::memory::HookRegistrar<ActorTickDebug2_hook>::unhook();
+        ll::memory::HookRegistrar<ActorTickDebug3_hook>::unhook();
+        ll::memory::HookRegistrar<ActorTickDebug_ActorRemoved_hook>::unhook();
+        actors.clear();
+    }
+    return isOn;
 }
 
 

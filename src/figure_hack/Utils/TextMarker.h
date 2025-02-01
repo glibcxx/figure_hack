@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mc/common/ActorUniqueID.h>
+#include <mc/deps/core/math/Vec2.h>
 #include <mc/deps/core/math/Vec3.h>
 #include <mc/world/level/BlockSource.h>
 
@@ -12,13 +13,19 @@ public:
     class TextHandle {
         friend class TextMarker;
 
-        BlockSource* const mRegion;
-        ActorUniqueID      mActorId;
-        TextHandle(BlockSource* region = nullptr, ActorUniqueID id = ActorUniqueID{-1})
-        : mRegion(region),
-          mActorId(id) {}
+        Level&        mLevel;
+        ActorUniqueID mActorId;
+        TextHandle(BlockSource& region, ActorUniqueID id = {}) : mLevel(region.getLevel()), mActorId(id) {}
 
     public:
+        TextHandle(TextHandle&& other) : mLevel(other.mLevel), mActorId(other.mActorId) { other.mActorId = {}; }
+
+        ~TextHandle() {
+            if (this->mActorId.rawID != -1) {
+                this->remove();
+            }
+        }
+
         void changeText(const std::string& text);
         void changePos(const Vec3& pos);
         void change(const std::string& text, const Vec3& pos);

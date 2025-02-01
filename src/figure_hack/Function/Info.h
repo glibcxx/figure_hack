@@ -13,4 +13,6 @@ std::optional<CircuitInfo> circuitInfoAtPos(BlockSource& region, const BlockPos&
 
 std::optional<ActorInfo> actorInfo(const Actor* except, BlockSource& region, const Vec3& from, const Vec3& to);
 
+bool toggleActorInfo(BlockSource& region);
+
 } // namespace fh
