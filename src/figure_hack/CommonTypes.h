@@ -27,4 +27,6 @@ struct ActorInfo {
     const Vec3&        velocity;
 };
 
+enum class ActorInfoMode : uint8_t { toggle = 0, overall, type, movement, status };
+
 } // namespace fh

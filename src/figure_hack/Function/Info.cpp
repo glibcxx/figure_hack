@@ -22,7 +22,9 @@
 #include <mc/world/redstone/circuit/CircuitSceneGraph.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
 
+#include "figure_hack/CommonTypes.h"
 #include "figure_hack/Utils/TextMarker.h"
+#include "fmt/compile.h"
 
 namespace fh {
 
@@ -82,16 +84,22 @@ std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, cons
                     : std::nullopt;
 }
 
-std::unordered_map<Actor*, TextMarker::TextHandle> actors{};
+std::unordered_map<Actor*, TextMarker::TextHandle> g_actors{};
 
-void _getActorInfo(Actor& actor) {
-    if (actor.getActorIdentifier().getNamespace() != "fh" && !actor.isPlayer() && !actor.isRemoved()) {
-        const ::Vec3& pos  = actor.getPosition();
-        const AABB&   aabb = actor.getAABB();
-        auto          uniqueIdComp =
-            actor.mEntityContext.get().mEnTTRegistry.try_get<ActorUniqueIDComponent>(actor.mEntityContext.get().mEntity
-            );
-        std::string dbgStr = fmt::format(
+ActorInfoMode g_currentMode = ActorInfoMode::overall;
+
+std::string _Vec3AsString(const Vec3& p) { return fmt::format("({:+.15E}, {:+.15E}, {:+.15E})", p.x, p.y, p.z); }
+std::string _Vec2AsString(const Vec2& p) { return fmt::format("({:+.15E}, {:+.15E})", p.x, p.y); }
+
+std::string _buildActorDbgString(Actor& actor) {
+    const ::Vec3& pos  = actor.getPosition();
+    const AABB&   aabb = actor.getAABB();
+    auto          uniqueIdComp =
+        actor.mEntityContext.get().mEnTTRegistry.try_get<ActorUniqueIDComponent>(actor.mEntityContext.get().mEntity);
+    switch (g_currentMode) {
+    default:
+    case ActorInfoMode::overall:
+        return fmt::format(
             "{}\n"
             "UniqueId: {}\n"
             "RuntimeId: {}\n"
@@ -99,7 +107,7 @@ void _getActorInfo(Actor& actor) {
             "PosPrev: {}\n"
             "Vel: {}\n"
             "Rot: {}\n"
-            "Health: {}\n",
+            "Health: {}",
             actor.getTypeName(),
             uniqueIdComp ? std::to_string(uniqueIdComp->mUnkf9218a.as<int64_t>()) : "None",
             actor.getRuntimeID().rawID,
@@ -109,9 +117,63 @@ void _getActorInfo(Actor& actor) {
             actor.getRotation(),
             actor.getHealth()
         );
-        auto it = actors.find(&actor);
-        if (it == actors.end()) {
-            actors.emplace(
+    case ActorInfoMode::type:
+        return fmt::format(
+            "{}\n"
+            "Variant: {}\n"
+            "UniqueId: {}\n"
+            "RuntimeId: {}",
+            actor.getTypeName(),
+            actor.getVariant(),
+            uniqueIdComp ? std::to_string(uniqueIdComp->mUnkf9218a.as<int64_t>()) : "None",
+            actor.getRuntimeID().rawID
+        );
+    case ActorInfoMode::movement:
+        return fmt::format(
+            "1. Pos 2. PosPrev  3. Vel 4. |Vel| 5. Rot\n"
+            "1. {}\n"
+            "2. {}\n"
+            "3. {}\n"
+            "4. {:+.15E}\n"
+            "5. {}",
+            _Vec3AsString(pos),
+            _Vec3AsString(actor.getPosPrev()),
+            _Vec3AsString(actor.getPosDelta()),
+            actor.getPosDelta().length(),
+            _Vec2AsString(actor.getRotation())
+        );
+    case ActorInfoMode::status:
+        return fmt::format(
+            "Global: {: <}   Autonomous: {: <}  \n"
+            "Alive: {: <}    Baby: {: <}        \n"
+            "Bribed: {: <}   Angry: {: <}       \n"
+            "Climbing: {: <} Moving: {: <}      \n"
+            "OnFire: {: <}   OnGround: {: <}    \n"
+            "Health: {: <}   FallDistance: {: <}",
+            actor.isGlobal(),
+            actor.isAutonomous(),
+            actor.isAlive(),
+            actor.isBaby(),
+            actor.isBribed(),
+            actor.isAngry(),
+            actor.isClimbing(),
+            actor.isMoving(),
+            actor.isOnFire(),
+            actor.isOnGround(),
+            actor.getHealth(),
+            actor.getFallDistance()
+        );
+    }
+}
+
+void _getActorInfo(Actor& actor) {
+    if (actor.getActorIdentifier().getNamespace() != "fh" && !actor.isPlayer() && !actor.isRemoved()) {
+        const ::Vec3& pos    = actor.getPosition();
+        const AABB&   aabb   = actor.getAABB();
+        std::string   dbgStr = _buildActorDbgString(actor);
+        auto          it     = g_actors.find(&actor);
+        if (it == g_actors.end()) {
+            g_actors.emplace(
                 &actor,
                 TextMarker::addText(actor.getDimensionBlockSource(), dbgStr, Vec3{pos.x, aabb.max.y, pos.z})
             );
@@ -161,7 +223,7 @@ LL_TYPE_INSTANCE_HOOK(
     &Actor::$remove,
     void
 ) {
-    actors.erase(this);
+    g_actors.erase(this);
     this->origin();
 }
 
@@ -174,22 +236,29 @@ LL_TYPE_INSTANCE_HOOK(ActorTickDebug3_hook, ll::memory::HookPriority::Normal, Mi
     return this->origin();
 }
 
-bool toggleActorInfo(BlockSource& region) {
-    static bool isOn = false;
-    isOn             = !isOn;
-    if (isOn) {
+bool toggleActorInfo(BlockSource& region, ActorInfoMode mode) {
+    static bool isOn = false, toggle = false;
+    if (mode == ActorInfoMode::toggle) {
+        toggle = true;
+        isOn   = !isOn;
+    } else {
+        toggle        = isOn == false;
+        isOn          = true;
+        g_currentMode = mode;
+    }
+    if (toggle && isOn) {
         ll::memory::HookRegistrar<ActorTickDebug_ActorLoaded_hook>::hook();
         ll::memory::HookRegistrar<ActorTickDebug_hook>::hook();
         ll::memory::HookRegistrar<ActorTickDebug2_hook>::hook();
         ll::memory::HookRegistrar<ActorTickDebug3_hook>::hook();
         ll::memory::HookRegistrar<ActorTickDebug_ActorRemoved_hook>::hook();
-    } else {
+    } else if (toggle) {
         ll::memory::HookRegistrar<ActorTickDebug_ActorLoaded_hook>::unhook();
         ll::memory::HookRegistrar<ActorTickDebug_hook>::unhook();
         ll::memory::HookRegistrar<ActorTickDebug2_hook>::unhook();
         ll::memory::HookRegistrar<ActorTickDebug3_hook>::unhook();
         ll::memory::HookRegistrar<ActorTickDebug_ActorRemoved_hook>::unhook();
-        actors.clear();
+        g_actors.clear();
     }
     return isOn;
 }

@@ -4,11 +4,13 @@
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPosition.h>
 
+#include "figure_hack/CommonTypes.h"
+
 namespace fh {
 
 struct InfoCommand {
 
-    enum class Mode : uint8_t { basic = 0, circuit, source, actor };
+    enum class Mode : uint8_t { basic = 0, circuit, source };
 
     static constexpr float INVALID_POSITION_Y = std::numeric_limits<float>::min();
 
@@ -17,6 +19,10 @@ struct InfoCommand {
         CommandPosition pos{
             Vec3{0, INVALID_POSITION_Y, 0}
         };
+    };
+
+    struct ActorInfoParams {
+        ActorInfoMode mode = ActorInfoMode::toggle;
     };
 
     static void init();

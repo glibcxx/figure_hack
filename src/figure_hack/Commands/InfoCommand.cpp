@@ -24,6 +24,21 @@
 #include "figure_hack/Function/Info.h"
 #include "figure_hack/Utils/BlockHighlight.h"
 #include "figure_hack/Utils/Utils.h"
+#include "magic_enum.hpp"
+
+namespace {
+
+using ll::i18n_literals::operator""_tr;
+
+bool checkExecuterIsPlayer(Actor* entity, CommandOutput& output) {
+    if (!entity || !entity->isPlayer()) { // 必须由玩家执行
+        output.error("command.info.error.invalid_player"_tr());
+        return false;
+    }
+    return true;
+}
+
+} // namespace
 
 namespace fh {
 
@@ -34,25 +49,33 @@ void InfoCommand::init() {
         "command.info.description"_tr(),
         CommandPermissionLevel::GameDirectors
     );
+
+    commandHandle.overload<ActorInfoParams>().text("actor").optional("mode").execute(
+        [](const CommandOrigin& origin, CommandOutput& output, const ActorInfoParams& params) {
+            Actor* entity = origin.getEntity();
+            if (checkExecuterIsPlayer(entity, output)) {
+                BlockSource& region = entity->getDimensionBlockSource();
+                bool         isOn   = fh::toggleActorInfo(region, params.mode);
+                output.success(
+                    "ActorInfo: {}",
+                    params.mode == ActorInfoMode::toggle ? (isOn ? "On" : "Off") : magic_enum::enum_name(params.mode)
+                );
+            }
+        }
+    );
     commandHandle.overload<Params>().required("mode").optional("pos").execute(
         [](const CommandOrigin& origin, CommandOutput& output, const Params& params) {
+            Actor* entity = origin.getEntity();
+            if (!checkExecuterIsPlayer(entity, output)) return;
+
             if (params.pos.mOffset->y == INVALID_POSITION_Y) {
                 // 指令参数未指定坐标
-                Actor* entity = origin.getEntity();
-                if (!entity || !entity->isPlayer()) { // 必须由玩家执行
-                    output.error("command.info.error.invalid_player"_tr());
+                HitResult result = entity->traceRay(5.2f, false);
+                if (!result) {
+                    output.error("command.info.error.no_block"_tr());
                     return;
                 }
-                if (params.mode == Mode::actor) {
-                    _excute(origin, output, params.mode, {});
-                } else {
-                    HitResult result = entity->traceRay(5.2f, false);
-                    if (!result) {
-                        output.error("command.info.error.no_block"_tr());
-                        return;
-                    }
-                    _excute(origin, output, params.mode, result.mBlock);
-                }
+                _excute(origin, output, params.mode, result.mBlock);
             } else {
                 _excute(origin, output, params.mode, params.pos.getBlockPos(origin.getBlockPosition(), Vec3{0}));
             }
@@ -62,17 +85,9 @@ void InfoCommand::init() {
 
 void InfoCommand::_excute(const CommandOrigin& origin, CommandOutput& output, Mode mode, const BlockPos& pos) {
     using ll::i18n_literals::operator""_tr;
-    Actor* entity = origin.getEntity();
-    if (!entity || !entity->isPlayer()) { // 必须由玩家执行
-        output.error("command.info.error.invalid_player"_tr());
-        return;
-    }
+    Actor*       entity = origin.getEntity();
     BlockSource& region = entity->getDimensionBlockSource();
     switch (mode) {
-    case Mode::actor: {
-        output.success("ActorInfo: {}", fh::toggleActorInfo(region) ? "On" : "Off");
-        break;
-    }
     case Mode::basic: {
         BlockHighlightManager::add(region, pos, {.color = BlockHighlightManager::Color::pink});
         auto data = fh::blockInfoAtPos(region, pos);

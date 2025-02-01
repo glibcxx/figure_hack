@@ -1,9 +1,8 @@
 #pragma once
 
-#include "figure_hack/CommonTypes.h"
 #include <mc/world/level/BlockSource.h>
-#include <optional>
 
+#include "figure_hack/CommonTypes.h"
 
 namespace fh {
 
@@ -13,6 +12,6 @@ std::optional<CircuitInfo> circuitInfoAtPos(BlockSource& region, const BlockPos&
 
 std::optional<ActorInfo> actorInfo(const Actor* except, BlockSource& region, const Vec3& from, const Vec3& to);
 
-bool toggleActorInfo(BlockSource& region);
+bool toggleActorInfo(BlockSource& region, ActorInfoMode mode);
 
 } // namespace fh
