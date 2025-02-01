@@ -15,6 +15,7 @@
 #include <mc/world/redstone/circuit/components/BaseRailTransporter.h>
 #include <mc/world/redstone/circuit/components/PoweredBlockComponent.h>
 #include <mc/world/redstone/circuit/components/TransporterComponent.h>
+#include <thread>
 
 
 #include "figure_hack/Utils/BlockHighlight.h"
@@ -27,8 +28,9 @@ std::unordered_map<BlockPos, DimensionType> posToDebug;
 
 ll::thread::ThreadPoolExecutor rsThread{"Redstone Thread", 1};
 
-bool rsThreadStarted      = false;
-bool needDrawHighlightBox = false;
+std::thread::id rsThreadId;
+
+bool rsThreadStarted = false;
 
 std::condition_variable cv;
 std::mutex              mutex_cv;
@@ -112,10 +114,14 @@ LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
     if (rsThreadStarted) {
         this->origin(pos, producerTarget, region);
     } else if (CPUVisualize::tryRemovePos(*region, pos)) {
-        currentRegion        = region;
-        rsThreadStarted      = true;
-        needDrawHighlightBox = true;
+        currentRegion   = region;
+        rsThreadStarted = true;
         rsThread.execute([this, &pos, producerTarget, region]() {
+            rsThreadId = std::this_thread::get_id();
+            {
+                std::unique_lock lock(mutex_cv);
+                cv.wait(lock, []() { return rs; });
+            }
             this->origin(pos, producerTarget, region);
             std::unique_lock lock(mutex_cv);
             rs              = false;
@@ -125,7 +131,6 @@ LL_AUTO_TYPE_INSTANCE_HOOK( // NOLINT
             cv.wait(lock);
         });
     } else {
-        needDrawHighlightBox = false;
         this->origin(pos, producerTarget, region);
     }
 }
@@ -190,7 +195,7 @@ LL_AUTO_STATIC_HOOK( // NOLINT
     std::queue<::CircuitTrackingInfo>& queue
 ) {
     using namespace std::chrono_literals;
-    if (rsThreadStarted && needDrawHighlightBox) {
+    if (rsThreadStarted && std::this_thread::get_id() == rsThreadId) {
         BlockHighlightManager::add(
             *currentRegion,
             info.mNearest->mPos,
@@ -224,7 +229,7 @@ LL_AUTO_STATIC_HOOK( // NOLINT
         std::unique_lock lock(mutex_cv);
         rs = false;
         cv.notify_all();
-        cv.wait(lock);
+        cv.wait(lock, []() { return rs; });
     } else {
         origin(graph, powerAssociationMap, newComponent, info, newPos, face, queue);
     }
