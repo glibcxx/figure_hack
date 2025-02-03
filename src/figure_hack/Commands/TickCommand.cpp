@@ -8,9 +8,10 @@
 
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
+#include <mc/util/Timer.h>
+#include <mc/world/Minecraft.h>
 
 #include "figure_hack/figure_hack.h"
-#include "mc/world/Minecraft.h"
 
 namespace fh {
 
@@ -43,35 +44,36 @@ void TickCommand::init() {
         }
     );
 
-    commandHandle.overload().text("reset").execute([](const CommandOrigin& origin, // NOLINT
-                                                      CommandOutput&       output) {
-        if (TickCommand::isFreeze) {
-            output.error("command.tick.rate.freeze_now"_tr());
-            return;
-        }
+    commandHandle.overload().text("reset").execute([](const CommandOrigin& origin, CommandOutput& output) { // NOLINT
         auto mc = ll::service::getMinecraft();
         if (mc) {
-
+            mc->setSimTimePause(false);
             mc->setSimTimeScale(1.0f);
-            TickCommand::nowRate = 20.0f;
+            TickCommand::isFreeze = false;
+            TickCommand::nowRate  = 20.0f;
             output.success("command.tick.reset.success"_tr());
         }
     });
 
-    commandHandle.overload<ParamsFreeze>().required("freeze").execute(
-        [](const CommandOrigin& origin, CommandOutput& output, const ParamsFreeze& params) { // NOLINT
+    commandHandle.overload().text("freeze").execute([](const CommandOrigin& origin, CommandOutput& output) { // NOLINT
+        auto mc = ll::service::getMinecraft();
+        if (mc) {
+            mc->setSimTimePause(true);
+            TickCommand::isFreeze = true;
+            output.success("command.tick.freeze.freezed"_tr());
+        }
+    });
+
+    commandHandle.overload<StepParams>().text("step").optional("tick").execute(
+        [](const CommandOrigin& origin, CommandOutput& output, const StepParams& params) { // NOLINT
+            if (params.tick < 0) {
+                output.error("Invalid tick input");
+                return;
+            }
             auto mc = ll::service::getMinecraft();
             if (mc) {
-                if (params.freeze == ParamsFreeze::FreezeType::freeze) {
-                    mc->setSimTimePause(true);
-                    TickCommand::isFreeze = true;
-                    output.success("command.tick.freeze.freezed"_tr());
-                } else {
-                    mc->setSimTimePause(false);
-                    mc->setSimTimeScale(TickCommand::nowRate / 20.0f);
-                    TickCommand::isFreeze = false;
-                    output.success("command.tick.freeze.resumed"_tr());
-                }
+                mc->mSimTimer.stepTick(params.tick);
+                output.success("Step: {}", params.tick);
             }
         }
     );

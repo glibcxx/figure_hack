@@ -10,8 +10,8 @@ struct TickCommand {
         float rate;
     };
 
-    struct ParamsFreeze {
-        enum class FreezeType { freeze = 0, resume } freeze;
+    struct StepParams {
+        int tick = 1;
     };
 
     static void init();
