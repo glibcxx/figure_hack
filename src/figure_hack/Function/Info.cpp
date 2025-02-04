@@ -24,7 +24,6 @@
 
 #include "figure_hack/CommonTypes.h"
 #include "figure_hack/Utils/TextMarker.h"
-#include "fmt/compile.h"
 
 namespace fh {
 
@@ -53,38 +52,7 @@ std::optional<CircuitInfo> circuitInfoAtPos(BlockSource& region, const BlockPos&
     }
 }
 
-std::optional<ActorInfo> actorInfo(const Actor* owner, BlockSource& region, const Vec3& from, const Vec3& to) {
-    auto actors = region.fetchEntities(
-        owner,
-        AABB{from, from}.cloneAndGrow(0.125f).cloneAndExpandAlongDirection(to - from),
-        true,
-        false
-    );
-    Actor* retActor = nullptr;
-    for (auto&& actor : actors) {
-        const AABB& actorBB = actor->getAABB();
-        if ((actorBB.contains(from) || (actorBB.clip(from, to).mUnk8b4661.as<bool>())
-            ) // from -> to 与 actorBB 有交点, 我也不知道mUnk8b4661是什么，但试了一遍好像能跑
-            && (!retActor || from.distanceToSqr(actor->getPosition()) < from.distanceToSqr(retActor->getPosition())
-            )) { // 只取最近的一个
-            retActor = actor;
-        }
-    }
-
-    // TextMarker::addText(region, fmt::format("{}", retActor->getPosition().toString()), retActor->getPosition());
-
-    return retActor ? std::optional<ActorInfo>{
-                          {
-                           .typeId    = retActor->getTypeName(),
-                           .runtimeId = retActor->getRuntimeID(),
-                           .pos       = retActor->getPosition(),
-                           .posPrev   = retActor->getPosPrev(),
-                           .velocity  = retActor->getPosDelta(),
-                           }}
-                    : std::nullopt;
-}
-
-std::unordered_map<Actor*, TextMarker::TextHandle> g_actors{};
+std::unordered_map<Actor*, TextMarker::TextObj> g_actors{};
 
 ActorInfoMode g_currentMode = ActorInfoMode::overall;
 
@@ -92,9 +60,8 @@ std::string _Vec3AsString(const Vec3& p) { return fmt::format("({:+.15E}, {:+.15
 std::string _Vec2AsString(const Vec2& p) { return fmt::format("({:+.15E}, {:+.15E})", p.x, p.y); }
 
 std::string _buildActorDbgString(Actor& actor) {
-    const ::Vec3& pos  = actor.getPosition();
-    const AABB&   aabb = actor.getAABB();
-    auto          uniqueIdComp =
+    const Vec3& pos = actor.getPosition();
+    auto        uniqueIdComp =
         actor.mEntityContext.get().mEnTTRegistry.try_get<ActorUniqueIDComponent>(actor.mEntityContext.get().mEntity);
     switch (g_currentMode) {
     default:
@@ -168,17 +135,17 @@ std::string _buildActorDbgString(Actor& actor) {
 
 void _getActorInfo(Actor& actor) {
     if (actor.getActorIdentifier().getNamespace() != "fh" && !actor.isPlayer() && !actor.isRemoved()) {
-        const ::Vec3& pos    = actor.getPosition();
-        const AABB&   aabb   = actor.getAABB();
-        std::string   dbgStr = _buildActorDbgString(actor);
-        auto          it     = g_actors.find(&actor);
+        const Vec3& pos    = actor.getPosition();
+        const AABB& aabb   = actor.getAABB();
+        std::string dbgStr = _buildActorDbgString(actor);
+        auto        it     = g_actors.find(&actor);
         if (it == g_actors.end()) {
-            g_actors.emplace(
+            g_actors.try_emplace(
                 &actor,
-                TextMarker::addText(actor.getDimensionBlockSource(), dbgStr, Vec3{pos.x, aabb.max.y, pos.z})
+                TextMarker::addText(actor.getDimensionBlockSource(), dbgStr, Vec3{pos.x, aabb.max.y, pos.z}, true)
             );
         } else {
-            it->second.change(dbgStr, Vec3{pos.x, aabb.max.y, pos.z});
+            it->second.change(dbgStr, Vec3{pos.x, aabb.max.y, pos.z}, true);
         }
     }
 }

@@ -10,32 +10,35 @@ namespace fh {
 
 class TextMarker {
 public:
-    class TextHandle {
+    class TextObj {
         friend class TextMarker;
 
         Level&        mLevel;
         ActorUniqueID mActorId;
-        TextHandle(BlockSource& region, ActorUniqueID id = {}) : mLevel(region.getLevel()), mActorId(id) {}
+        TextObj(BlockSource& region, ActorUniqueID id = {}) : mLevel(region.getLevel()), mActorId(id) {}
 
     public:
-        TextHandle(TextHandle&& other) : mLevel(other.mLevel), mActorId(other.mActorId) { other.mActorId = {}; }
+        TextObj(const TextObj&)            = delete;
+        TextObj& operator=(const TextObj&) = delete;
 
-        ~TextHandle() {
+        TextObj(TextObj&& other) : mLevel(other.mLevel), mActorId(other.mActorId) { other.mActorId = {}; }
+
+        ~TextObj() {
             if (this->mActorId.rawID != -1) {
                 this->remove();
             }
         }
 
-        void changeText(const std::string& text);
-        void changePos(const Vec3& pos);
-        void change(const std::string& text, const Vec3& pos);
+        void changeText(const std::string& text, bool syncToClientImmediatly = false);
+        void changePos(const Vec3& pos, bool syncToClientImmediatly = false);
+        void change(const std::string& text, const Vec3& pos, bool syncToClientImmediatly = false);
         void remove();
 
         bool isValid() const { return this->mActorId.rawID != -1; }
         operator bool() const { return this->mActorId.rawID != -1; }
     };
 
-    static TextHandle addText(BlockSource& region, const std::string& text, const Vec3& pos);
+    static TextObj addText(BlockSource& region, const std::string& text, const Vec3& pos, bool syncToClientImmediatly = false);
 };
 
 } // namespace fh
