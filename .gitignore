@@ -1,3 +1,5 @@
+assets/*.mcaddon
+
 # https://github.com/github/gitignore/blob/main/C++.gitignore
 # Prerequisites
 *.d

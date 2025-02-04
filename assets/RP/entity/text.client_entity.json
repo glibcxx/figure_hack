@@ -5,7 +5,8 @@
             "identifier": "fh:text_marker",
             "materials": { "default": "entity_alphatest" },
             "render_controllers": ["controller.render.default"],
-            "geometry": { "default": "geometry.default" }
+            "geometry": { "default": "geometry.text_marker" },
+            "textures": { "default": "" }
         }
     }
 }
