@@ -130,3 +130,11 @@ lip install github.com/glibcxx/figure_hack
 ```
 
 列出游戏内所有 ChunkSource。
+
+### 查询计划刻
+
+```
+/pdtick
+```
+
+列出当前区块的所有计划刻，并按执行顺序排序。

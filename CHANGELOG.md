@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - incoming
+
+### What's new
+
+-   `/info actor`指令功能重写
+
+### Changes
+
+-   以后不用手动写 world_behavior_packs.json 文件了
+
 ## [0.3.1] - 2025-1-18
 
 ### What's new
