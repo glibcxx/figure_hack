@@ -30,7 +30,7 @@ namespace {
 
 using ll::i18n_literals::operator""_tr;
 
-bool checkExecuterIsPlayer(Actor* entity, CommandOutput& output) {
+bool checkExecutorIsPlayer(Actor* entity, CommandOutput& output) {
     if (!entity || !entity->isPlayer()) { // 必须由玩家执行
         output.error("command.info.error.invalid_player"_tr());
         return false;
@@ -53,7 +53,7 @@ void InfoCommand::init() {
     commandHandle.overload<ActorInfoParams>().text("actor").optional("mode").execute(
         [](const CommandOrigin& origin, CommandOutput& output, const ActorInfoParams& params) {
             Actor* entity = origin.getEntity();
-            if (checkExecuterIsPlayer(entity, output)) {
+            if (checkExecutorIsPlayer(entity, output)) {
                 BlockSource& region = entity->getDimensionBlockSource();
                 bool         isOn   = fh::toggleActorInfo(region, params.mode);
                 output.success(
@@ -66,7 +66,7 @@ void InfoCommand::init() {
     commandHandle.overload<Params>().required("mode").optional("pos").execute(
         [](const CommandOrigin& origin, CommandOutput& output, const Params& params) {
             Actor* entity = origin.getEntity();
-            if (!checkExecuterIsPlayer(entity, output)) return;
+            if (!checkExecutorIsPlayer(entity, output)) return;
 
             if (params.pos.mOffset->y == INVALID_POSITION_Y) {
                 // 指令参数未指定坐标

@@ -130,6 +130,8 @@ std::string _buildActorDbgString(Actor& actor) {
             actor.getHealth(),
             actor.getFallDistance()
         );
+    case ActorInfoMode::special:
+        return buildSpecialActorDbgString(actor);
     }
 }
 

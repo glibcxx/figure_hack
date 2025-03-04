@@ -12,4 +12,6 @@ std::optional<CircuitInfo> circuitInfoAtPos(BlockSource& region, const BlockPos&
 
 bool toggleActorInfo(BlockSource& region, ActorInfoMode mode);
 
+std::string buildSpecialActorDbgString(Actor& actor);
+
 } // namespace fh
