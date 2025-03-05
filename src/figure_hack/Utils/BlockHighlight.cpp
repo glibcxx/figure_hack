@@ -6,20 +6,22 @@
 #include <ll/api/memory/Hook.h>
 #include <ll/api/service/Bedrock.h>
 #include <ll/api/utils/StringUtils.h>
-#include <mc/common/ActorRuntimeID.h>
-#include <mc/common/ActorUniqueID.h>
 #include <mc/deps/core/math/Vec2.h>
 #include <mc/deps/core/math/Vec3.h>
 #include <mc/deps/core/string/HashedString.h>
+#include <mc/deps/ecs/gamerefs_entity/GameRefsEntity.h>
+#include <mc/legacy/ActorRuntimeID.h>
+#include <mc/legacy/ActorUniqueID.h>
 #include <mc/server/ServerLevel.h>
-#include <mc/server/commands/CommandUtils.h>
 #include <mc/world/actor/Actor.h>
 #include <mc/world/actor/ActorDefinitionIdentifier.h>
+#include <mc/world/actor/ActorFactory.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/chunk/LevelChunk.h>
 #include <mc/world/phys/AABB.h>
 #include <unordered_map>
 #include <vector>
+
 
 namespace fh {
 
@@ -44,11 +46,11 @@ std::unordered_map<BlockPos, std::vector<ActorUniqueID>> stableHighlight;
 
 LL_AUTO_TYPE_INSTANCE_HOOK(LoopTick, HookPriority::Normal, ServerLevel, &ServerLevel::$tick, void) {
     for (auto&& [region, id, pos, params] : addQueue) {
-        ActorUniqueID uniqueid;
-        Actor* highligher = CommandUtils::spawnEntityAt(region, Vec3{0.5, -0.008, 0.5} + pos, id, uniqueid, nullptr);
+        auto   actor      = region.getLevel().getActorFactory().createSpawnedActor(id, nullptr, Vec3{0.5, -0.008, 0.5} + pos, {});
+        Actor* highligher = region.getLevel().addEntity(region, actor);
         if (highligher) {
-            highligher->setAABB(AABB{0, 0, 0, 0, 0, 0});
             highligher->setVariant(static_cast<int>(params.color));
+            ActorUniqueID uniqueid = highligher->getOrCreateUniqueID();
             if (params.lifespan > 0)
                 rmQueue.push({uniqueid, params.lifespan + region.getLevel().getCurrentTick().tickID});
             else stableHighlight[pos].push_back(uniqueid);

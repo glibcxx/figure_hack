@@ -32,7 +32,7 @@ void BlockItemCommand::init() {
                 output.error("invalid executor");
                 return;
             }
-            const Block* block = params.blockName.resolveBlock(0).getBlock();
+            const Block* block = params.blockName.resolveBlock(0).mBlock;
             BlockItemCommand::_additem(output, entity, block);
         });
 
@@ -57,7 +57,7 @@ void BlockItemCommand::init() {
                 output.error("invalid executor");
                 return;
             }
-            auto block = Block::tryGetFromRegistry(params.namespaceId.getText());
+            auto block = Block::tryGetFromRegistry(params.namespaceId.mText);
             BlockItemCommand::_additem(output, entity, block.as_ptr());
         });
 }
@@ -68,7 +68,7 @@ void BlockItemCommand::_additem(CommandOutput& output, Actor* entity, const Bloc
         return;
     }
     Player&   player = *static_cast<Player*>(entity);
-    ItemStack itemStack{*block, 1};
+    ItemStack itemStack{*block->mLegacyBlock};
     player.add(itemStack);
     player.refreshInventory();
     output.success("add item success");

@@ -15,6 +15,23 @@
 
 namespace fh {
 
+void Timer__stepTick(Timer& timer, int numSteps) {
+    timer.mSteppingTick = numSteps;
+    if (timer.mSteppingTick >= 0) {
+        float passedSeconds = numSteps / timer.mTicksPerSecond;
+        timer.mLastTimestep = passedSeconds;
+        timer.mPassedTime   = passedSeconds * timer.mTimeScale;
+        timer.mAlpha        = timer.mPassedTime;
+    } else {
+        timer.mLastMsSysTime = timer.mLastMs = (*timer.mGetTimeMSCallback)();
+        timer.mLastTimeSeconds               = timer.mLastMs / 1000.0f;
+        timer.mPassedTime                    = 0.0f;
+        timer.mLastTimestep                  = 0.0f;
+        timer.mFrameStepAlignmentRemainder   = 0.0f;
+        timer.mTimeScale                     = 1.0f;
+    }
+}
+
 void TickCommand::init() {
     if (!figureHack::getInstance().getConfig().function.tick_command) return;
 
@@ -72,7 +89,7 @@ void TickCommand::init() {
             }
             auto mc = ll::service::getMinecraft();
             if (mc) {
-                mc->mSimTimer.stepTick(params.tick);
+                Timer__stepTick(mc->mSimTimer, params.tick);
                 output.success("Step: {}", params.tick);
             }
         }

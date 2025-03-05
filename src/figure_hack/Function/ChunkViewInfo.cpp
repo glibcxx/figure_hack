@@ -55,7 +55,7 @@ void queryCurrentChunkSourceInfo(Player* player) {
                     chunkSource->mArea->mBounds.mDim.get().y,
                     chunkSource->mArea->mBounds.mDim.get().z,
                     chunkSource->mArea->mCircle,
-                    chunkSource->getDimension().getDimensionId().id,
+                    chunkSource->mDimension->getDimensionId().id,
                     (uintptr_t)chunkSource
                 )
             );

@@ -62,7 +62,7 @@ void QueryPendingTickCommand::getPtInfoAtChunkPos(
     CommandOutput&  output,
     int             displayTime
 ) {
-    BlockTickingQueue&             pt                  = region.getChunk(chunkPos)->getTickQueue();
+    BlockTickingQueue&             pt                  = *region.getChunk(chunkPos)->mTickQueue;
     BlockTickingQueue::TickDataSet copiedNextTickQueue = *pt.mNextTickQueue;
     BlockTickingQueue::TickDataSet activeTickQueue;
     if (!copiedNextTickQueue.empty()) {
@@ -75,7 +75,7 @@ void QueryPendingTickCommand::getPtInfoAtChunkPos(
         for (; !copiedNextTickQueue.empty();) {
             auto& blockTick = copiedNextTickQueue.top();
             if (blockTick.mIsRemoved) {
-                output.success("  {}: removed", blockTick.mData.pos->toString());
+                output.success("  {}: removed", blockTick.mData.pos.toString());
                 BlockHighlightManager::add(
                     region,
                     blockTick.mData.pos,
@@ -91,15 +91,15 @@ void QueryPendingTickCommand::getPtInfoAtChunkPos(
             auto& blockTick = activeTickQueue.top();
             output.success(
                 "  {}: tick time {}, priority {}, {}",
-                blockTick.mData.pos->toString(),
-                blockTick.mData.tick->tickID,
+                blockTick.mData.pos.toString(),
+                blockTick.mData.tick.tickID,
                 blockTick.mData.priorityOffset,
                 "{}"_tr(blockTick.mData.mBlock->buildDescriptionName())
             );
             BlockHighlightManager::add(
                 region,
                 blockTick.mData.pos,
-                {.color    = blockTick.mData.tick->tickID <= now ? BlockHighlightManager::Color::green
+                {.color    = blockTick.mData.tick.tickID <= now ? BlockHighlightManager::Color::green
                                                                  : BlockHighlightManager::Color::yellow,
                  .lifespan = (uint32_t)displayTime}
             );

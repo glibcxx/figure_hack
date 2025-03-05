@@ -64,7 +64,7 @@ bool CPUVisualize::tryRemovePos(BlockSource& region, const BlockPos& pos) {
 void CPUVisualize::clearPos(Level& level) {
     for (auto&& [pos, dimType] : posToDebug) {
         auto ref = level.getDimension(dimType);
-        if (ref) {
+        if (!ref.expired()) {
             BlockHighlightManager::removeStable(ref.lock()->getBlockSourceFromMainChunkSource(), pos);
         }
     }

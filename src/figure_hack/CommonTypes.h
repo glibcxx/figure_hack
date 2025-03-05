@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include <mc/common/ActorRuntimeID.h>
-#include <mc/common/ActorUniqueID.h>
+#include <mc/legacy/ActorRuntimeID.h>
+#include <mc/legacy/ActorUniqueID.h>
 #include <mc/world/redstone/circuit/components/BaseCircuitComponent.h>
 #include <mc/world/redstone/circuit/components/CircuitComponentType.h>
 

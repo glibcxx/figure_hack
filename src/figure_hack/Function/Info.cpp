@@ -4,6 +4,8 @@
 #include <ll/api/memory/Hook.h>
 #include <mc/deps/core/math/Vec2.h>
 #include <mc/deps/ecs/gamerefs_entity/EntityContext.h>
+#include <mc/deps/vanilla_components/StateVectorComponent.h>
+#include <mc/entity/components/ActorRotationComponent.h>
 #include <mc/entity/components/ActorUniqueIDComponent.h>
 #include <mc/network/SpatialActorNetworkData.h>
 #include <mc/server/commands/Command.h>
@@ -13,6 +15,7 @@
 #include <mc/world/actor/ActorDefinitionIdentifier.h>
 #include <mc/world/actor/ActorFactory.h>
 #include <mc/world/actor/ActorFactoryData.h>
+#include <mc/world/actor/BuiltInActorComponents.h>
 #include <mc/world/actor/player/Player.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/block/Block.h>
@@ -35,7 +38,7 @@ BlockInfo blockInfoAtPos(BlockSource& region, const BlockPos& pos) {
 }
 
 std::optional<CircuitInfo> circuitInfoAtPos(BlockSource& region, const BlockPos& pos) {
-    CircuitSystem&     system = region.getDimension().getCircuitSystem();
+    CircuitSystem&     system = *region.getDimension().mCircuitSystem;
     CircuitSceneGraph& graph  = system.mSceneGraph;
     auto               comp   = graph.mAllComponents.find(pos);
     if (comp != graph.mAllComponents.end()) {
@@ -60,9 +63,11 @@ std::string _Vec3AsString(const Vec3& p) { return fmt::format("({:+.15E}, {:+.15
 std::string _Vec2AsString(const Vec2& p) { return fmt::format("({:+.15E}, {:+.15E})", p.x, p.y); }
 
 std::string _buildActorDbgString(Actor& actor) {
-    const Vec3& pos = actor.getPosition();
-    auto        uniqueIdComp =
+    auto uniqueIdComp =
         actor.mEntityContext.get().mEnTTRegistry.try_get<ActorUniqueIDComponent>(actor.mEntityContext.get().mEntity);
+    auto&       svc = *actor.mBuiltInComponents->mStateVectorComponent;
+    auto&       rot = *actor.mBuiltInComponents->mActorRotationComponent;
+    const Vec3& pos = svc.mPos;
     switch (g_currentMode) {
     default:
     case ActorInfoMode::overall:
@@ -76,13 +81,13 @@ std::string _buildActorDbgString(Actor& actor) {
             "Rot: {}\n"
             "Health: {}",
             actor.getTypeName(),
-            uniqueIdComp ? std::to_string(uniqueIdComp->mUnkf9218a.as<int64_t>()) : "None",
+            uniqueIdComp ? std::to_string(uniqueIdComp->mActorUniqueID->rawID) : "None",
             actor.getRuntimeID().rawID,
             pos.toString(),
-            actor.getPosPrev().toString(),
-            actor.getPosDelta().toString(),
-            actor.getRotation(),
-            actor.getHealth()
+            svc.mPosPrev->toString(),
+            svc.mPosDelta->toString(),
+            rot.mRotationDegree->toString(),
+            actor.mLastHealth
         );
     case ActorInfoMode::type:
         return fmt::format(
@@ -92,42 +97,36 @@ std::string _buildActorDbgString(Actor& actor) {
             "RuntimeId: {}",
             actor.getTypeName(),
             actor.getVariant(),
-            uniqueIdComp ? std::to_string(uniqueIdComp->mUnkf9218a.as<int64_t>()) : "None",
+            uniqueIdComp ? std::to_string(uniqueIdComp->mActorUniqueID->rawID) : "None",
             actor.getRuntimeID().rawID
         );
     case ActorInfoMode::movement:
         return fmt::format(
-            "1. Pos 2. PosPrev  3. Vel 4. |Vel| 5. Rot\n"
+            "1. Pos 2. PosPrev 3. Vel 4. |Vel| 5. Rot\n"
             "1. {}\n"
             "2. {}\n"
             "3. {}\n"
-            "4. {:+.15E}\n"
-            "5. {}",
+            "3. {:+.15E}\n"
+            "4. {}",
             _Vec3AsString(pos),
-            _Vec3AsString(actor.getPosPrev()),
-            _Vec3AsString(actor.getPosDelta()),
-            actor.getPosDelta().length(),
-            _Vec2AsString(actor.getRotation())
+            _Vec3AsString(svc.mPosPrev),
+            _Vec3AsString(svc.mPosDelta),
+            svc.mPosDelta->length(),
+            _Vec2AsString(rot.mRotationDegree)
         );
     case ActorInfoMode::status:
         return fmt::format(
             "Global: {: <}   Autonomous: {: <}  \n"
             "Alive: {: <}    Baby: {: <}        \n"
-            "Bribed: {: <}   Angry: {: <}       \n"
-            "Climbing: {: <} Moving: {: <}      \n"
             "OnFire: {: <}   OnGround: {: <}    \n"
             "Health: {: <}   FallDistance: {: <}",
             actor.isGlobal(),
             actor.isAutonomous(),
             actor.isAlive(),
             actor.isBaby(),
-            actor.isBribed(),
-            actor.isAngry(),
-            actor.isClimbing(),
-            actor.isMoving(),
             actor.isOnFire(),
             actor.isOnGround(),
-            actor.getHealth(),
+            actor.mLastHealth,
             actor.getFallDistance()
         );
     case ActorInfoMode::special:
@@ -136,7 +135,7 @@ std::string _buildActorDbgString(Actor& actor) {
 }
 
 void _getActorInfo(Actor& actor) {
-    if (actor.getActorIdentifier().getNamespace() != "fh" && !actor.isPlayer() && !actor.isRemoved()) {
+    if (*actor.getActorIdentifier().mNamespace != "fh" && !actor.isPlayer() && !actor.mRemoved) {
         const Vec3& pos    = actor.getPosition();
         const AABB& aabb   = actor.getAABB();
         std::string dbgStr = _buildActorDbgString(actor);

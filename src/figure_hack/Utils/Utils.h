@@ -24,7 +24,7 @@ inline bool executeCommand(Player& executor, const std::string& command) {
     CommandContext                       context{"/" + command, std::move(origin), CommandVersion::CurrentVersion()};
     optional_ref<Minecraft>              mc = ll::service::getMinecraft();
 
-    return mc && mc->getCommands().executeCommand(context, false).mSuccess;
+    return mc && mc->mCommands->executeCommand(context, false).mSuccess;
 }
 
 inline std::string typeId2Name(CircuitComponentType type) {

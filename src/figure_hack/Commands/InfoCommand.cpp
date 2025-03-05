@@ -7,7 +7,7 @@
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
 
-#include <mc/common/ActorRuntimeID.h>
+#include <mc/legacy/ActorRuntimeID.h>
 #include <mc/server/commands/CommandOutput.h>
 #include <mc/server/commands/CommandPermissionLevel.h>
 #include <mc/world/Minecraft.h>
@@ -77,7 +77,7 @@ void InfoCommand::init() {
                 }
                 _excute(origin, output, params.mode, result.mBlock);
             } else {
-                _excute(origin, output, params.mode, params.pos.getBlockPos(origin.getBlockPosition(), Vec3{0}));
+                _excute(origin, output, params.mode, params.pos.getBlockPos(0, origin, Vec3{0}));
             }
         }
     );

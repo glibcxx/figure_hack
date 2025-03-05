@@ -27,11 +27,11 @@ void GiveMagicStickCommand::init() {
     commandHandle.overload().execute([](const CommandOrigin& origin, CommandOutput& output) { // NOLINT
         Actor* entity = origin.getEntity();
         if (entity && entity->isPlayer()) {
-            Player&   player = *static_cast<Player*>(entity);
-            ItemStack itemStack{"stick", 1};
-            itemStack.setCustomName(
-                ::Bedrock::Safety::RedactableString{"item.magic_stick.name"_tr(MagicStick::mode_name[0])}
-            );
+            Player&                           player = *static_cast<Player*>(entity);
+            ItemStack                         itemStack{"stick", 1};
+            Bedrock::Safety::RedactableString s;
+            s.set({"item.magic_stick.name"_tr(MagicStick::mode_name[0])});
+            itemStack.setCustomName(s);
             EnchantUtils::applyEnchant(itemStack, Enchant::Type::Efficiency, 1, true);
             player.add(itemStack);
             player.refreshInventory();

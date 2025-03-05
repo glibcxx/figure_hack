@@ -12,7 +12,7 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     bool,
     CompoundTag& entityTag
 ) {
-    if (this->getActorIdentifier().getNamespace() == "fh") return false;
+    if (*this->getActorIdentifier().mNamespace == "fh") return false;
 
     return this->origin(entityTag);
 }

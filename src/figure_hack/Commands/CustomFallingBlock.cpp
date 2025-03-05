@@ -47,10 +47,9 @@ void CustomFallingBlockCommand::init() {
             _spwanFallingBlock(
                 output,
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
-                params.blockPos.mOffset->y != INVALID_POSITION_Y
-                    ? params.blockPos.getBlockPos(origin.getBlockPosition(), Vec3{0})
-                    : origin.getBlockPosition(),
-                params.blockName.resolveBlock(0).getBlock()
+                params.blockPos.mOffset->y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(0, origin, Vec3{0})
+                                                                 : origin.getBlockPosition(),
+                params.blockName.resolveBlock(0).mBlock
             );
         });
 
@@ -61,9 +60,8 @@ void CustomFallingBlockCommand::init() {
             _spwanFallingBlock(
                 output,
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
-                params.blockPos.mOffset->y != INVALID_POSITION_Y
-                    ? params.blockPos.getBlockPos(origin.getBlockPosition(), Vec3{0})
-                    : origin.getBlockPosition(),
+                params.blockPos.mOffset->y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(0, origin, Vec3{0})
+                                                                 : origin.getBlockPosition(),
                 Block::tryGetFromRegistry(params.blockId, 0).as_ptr()
             );
         });
@@ -75,10 +73,9 @@ void CustomFallingBlockCommand::init() {
             _spwanFallingBlock(
                 output,
                 origin.getDimension()->getBlockSourceFromMainChunkSource(),
-                params.blockPos.mOffset->y != INVALID_POSITION_Y
-                    ? params.blockPos.getBlockPos(origin.getBlockPosition(), Vec3{0})
-                    : origin.getBlockPosition(),
-                Block::tryGetFromRegistry(params.namespaceId.getText()).as_ptr()
+                params.blockPos.mOffset->y != INVALID_POSITION_Y ? params.blockPos.getBlockPos(0, origin, Vec3{0})
+                                                                 : origin.getBlockPosition(),
+                Block::tryGetFromRegistry(params.namespaceId.mText).as_ptr()
             );
         });
 }

@@ -55,7 +55,7 @@ void MagicStick::enable() {
     playerUseMagicStickEventListener =
         bus.emplaceListener<ll::event::PlayerInteractBlockEvent>([](ll::event::PlayerInteractBlockEvent& event) {
             Player&         player = event.self();
-            uint64          now    = player.getLevelTimeStamp();
+            uint64          now    = player.mTickCount;
             const BlockPos& pos    = event.blockPos();
             ItemStack&      item   = event.item();
 
@@ -99,19 +99,19 @@ void MagicStick::enable() {
             Player&      player    = event.self();
             HitResult    hitResult = player.traceRay(5.5f, false, true);
             const Block& block     = player.getDimensionBlockSource().getBlock(hitResult.mBlock);
-            if (block.isInteractiveBlock()) {
+            if (block.getLegacyBlock().isInteractiveBlock()) {
                 return;
             }
-            uint64     now   = player.getLevelTimeStamp();
+            uint64     now   = player.mTickCount;
             ItemStack& item  = const_cast<ItemStack&>(player.getSelectedItem());
             int        level = EnchantUtils::getEnchantLevel(Enchant::Type::Efficiency, item);
             if (now - lastChangeModeTime > 2 && item.getTypeName() == "minecraft:stick" && level != 0) {
-                EnchantUtils::removeEnchants(item);
+                item.removeEnchants();
                 level = level + 1 > 4 ? 1 : level + 1;
                 EnchantUtils::applyEnchant(item, Enchant::Type::Efficiency, level, true);
-                item.setCustomName(
-                    ::Bedrock::Safety::RedactableString{"item.magic_stick.name"_tr(MagicStick::mode_name[level - 1])}
-                );
+                ::Bedrock::Safety::RedactableString s;
+                s.set("item.magic_stick.name"_tr(MagicStick::mode_name[level - 1]));
+                item.setCustomName(s);
                 player.sendMessage("item.magic_stick.changed_to"_tr(MagicStick::mode_name[level - 1]));
                 player.refreshInventory();
                 CPUVisualize::clearPos(player.getLevel());
