@@ -31,8 +31,8 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     if (stackType == ResourcePackStackType::Addon && !isPackLoaded) {
         PackIdVersion packId = PackIdVersion::fromString("53d6b8ca-ec81-4965-adc9-5d8ee6632f72_1.0.1");
         packId.mPackType     = PackType::Addon;
-        optional_ref repo    = ll::service::getResourcePackRepository();
-        ResourcePack* pack = repo->getResourcePackForPackId(packId);
+        optional_ref  repo   = ll::service::getResourcePackRepository();
+        ResourcePack* pack   = repo->getResourcePackForPackId(packId);
         stack->add(
             {
                 Bedrock::NonOwnerPointer{pack->mControlBlock, pack},

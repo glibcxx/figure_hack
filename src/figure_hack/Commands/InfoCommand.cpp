@@ -1,25 +1,10 @@
 #include "InfoCommand.h"
 
-#include <ll/api/chrono/GameChrono.h>
-#include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
 #include <ll/api/i18n/I18n.h>
-#include <ll/api/service/Bedrock.h>
 
-#include <mc/legacy/ActorRuntimeID.h>
-#include <mc/server/commands/CommandOutput.h>
-#include <mc/server/commands/CommandPermissionLevel.h>
-#include <mc/world/Minecraft.h>
-#include <mc/world/actor/Actor.h>
-#include <mc/world/actor/player/Player.h>
-#include <mc/world/level/BlockSource.h>
-#include <mc/world/level/Level.h>
-#include <mc/world/level/block/Block.h>
-#include <mc/world/level/dimension/Dimension.h>
-#include <mc/world/phys/AABB.h>
 #include <mc/world/phys/HitResult.h>
-#include <mc/world/redstone/circuit/CircuitSystem.h>
 
 #include "figure_hack/Function/Info.h"
 #include "figure_hack/Utils/BlockHighlight.h"
@@ -28,7 +13,7 @@
 
 namespace {
 
-using ll::i18n_literals::operator""_tr;
+using namespace ll::i18n_literals;
 
 bool checkExecutorIsPlayer(Actor* entity, CommandOutput& output) {
     if (!entity || !entity->isPlayer()) { // 必须由玩家执行

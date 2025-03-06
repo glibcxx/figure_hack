@@ -1,19 +1,18 @@
 #pragma once
 
-#include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/service/Bedrock.h>
 
-#include "figure_hack/CommonTypes.h"
-#include "mc/deps/core/utility/MCRESULT.h"
-#include "mc/server/commands/CommandContext.h"
-#include "mc/server/commands/MinecraftCommands.h"
-#include "mc/server/commands/PlayerCommandOrigin.h"
-#include "mc/world/Minecraft.h"
-#include "mc/world/level/dimension/Dimension.h"
+#include <mc/deps/core/utility/MCRESULT.h>
+#include <mc/server/commands/CommandContext.h>
+#include <mc/server/commands/MinecraftCommands.h>
+#include <mc/server/commands/PlayerCommandOrigin.h>
+#include <mc/world/Minecraft.h>
+#include <mc/world/level/dimension/Dimension.h>
 
+#include "figure_hack/CommonTypes.h"
 
 namespace fh {
 namespace utils {

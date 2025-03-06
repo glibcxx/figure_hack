@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include <mc/legacy/ActorRuntimeID.h>
 #include <mc/legacy/ActorUniqueID.h>
 #include <mc/world/redstone/circuit/components/BaseCircuitComponent.h>

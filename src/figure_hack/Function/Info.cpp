@@ -9,9 +9,7 @@
 #include <mc/entity/components/ActorUniqueIDComponent.h>
 #include <mc/network/SpatialActorNetworkData.h>
 #include <mc/server/commands/Command.h>
-#include <mc/server/commands/CommandUtils.h>
 #include <mc/world/Minecraft.h>
-#include <mc/world/actor/Actor.h>
 #include <mc/world/actor/ActorDefinitionIdentifier.h>
 #include <mc/world/actor/ActorFactory.h>
 #include <mc/world/actor/ActorFactoryData.h>

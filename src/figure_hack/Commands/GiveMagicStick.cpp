@@ -1,19 +1,14 @@
 #include "GiveMagicStick.h"
 
-#include <ll/api/command/Command.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
 #include <ll/api/i18n/I18n.h>
-#include <ll/api/service/Bedrock.h>
-#include <mc/safety/RedactableString.h>
-#include <mc/server/commands/CommandOutput.h>
-#include <mc/server/commands/CommandPermissionLevel.h>
 
+#include <mc/safety/RedactableString.h>
+#include <mc/world/actor/player/Player.h>
+#include <mc/world/item/enchanting/EnchantUtils.h>
 
 #include "figure_hack/Function/MagicStick.h"
-#include "mc/world/actor/player/Player.h"
-#include "mc/world/item/enchanting/EnchantUtils.h"
-
 
 namespace fh {
 

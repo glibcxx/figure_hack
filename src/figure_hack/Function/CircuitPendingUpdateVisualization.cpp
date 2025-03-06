@@ -3,24 +3,16 @@
 #include <ll/api/memory/Hook.h>
 #include <ll/api/service/Bedrock.h>
 #include <ll/api/thread/ThreadPoolExecutor.h>
-#include <mc/world/Facing.h>
-#include <mc/world/level/BlockSource.h>
-#include <mc/world/level/ChunkPos.h>
 #include <mc/world/level/Level.h>
-#include <mc/world/level/block/Block.h>
-#include <mc/world/level/chunk/LevelChunk.h>
 #include <mc/world/redstone/circuit/CircuitSceneGraph.h>
 #include <mc/world/redstone/circuit/CircuitSystem.h>
 #include <mc/world/redstone/circuit/CircuitTrackingInfo.h>
 #include <mc/world/redstone/circuit/components/BaseRailTransporter.h>
 #include <mc/world/redstone/circuit/components/PoweredBlockComponent.h>
 #include <mc/world/redstone/circuit/components/TransporterComponent.h>
-#include <thread>
-
 
 #include "figure_hack/Utils/BlockHighlight.h"
 #include "figure_hack/figure_hack.h"
-#include "ll/api/chrono/GameChrono.h"
 
 namespace fh {
 

@@ -1,11 +1,8 @@
-#include <span>
-
 #include "figure_hack.h"
 
 #include <ll/api/Config.h>
 #include <ll/api/i18n/I18n.h>
 #include <ll/api/mod/RegisterHelper.h>
-#include <memory>
 
 #include "Commands/Commands.h"
 #include "Function/MagicStick.h"

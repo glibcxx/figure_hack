@@ -1,16 +1,12 @@
 #include "TextMarker.h"
 
 #include <mc/deps/ecs/gamerefs_entity/GameRefsEntity.h>
-#include <mc/entity/components/BlockSourceComponent.h>
 #include <mc/network/SpatialActorNetworkData.h>
 #include <mc/network/packet/AddActorPacket.h>
 #include <mc/server/ServerLevel.h>
 #include <mc/world/actor/Actor.h>
 #include <mc/world/actor/ActorDefinitionIdentifier.h>
 #include <mc/world/actor/ActorFactory.h>
-#include <mc/world/phys/AABB.h>
-
-#include <mc/entity/components_json_legacy/PushableComponent.h>
 
 namespace fh {
 
@@ -26,8 +22,6 @@ TextMarker::addText(BlockSource& region, const std::string& text, const Vec3& po
         auto packet = textActor->tryCreateAddActorPacket();
         if (packet) packet->sendToClients();
     }
-    optional_ref<PushableComponent> push = textActor->mEntityContext->tryGetComponent<PushableComponent>();
-    std::cout << push->mIsPushableByPiston << std::endl;
     return {region, textActor->getOrCreateUniqueID()};
 }
 
